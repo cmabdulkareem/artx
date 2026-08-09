@@ -81,19 +81,6 @@ export default function Navbar() {
                 />
               </div>
             </motion.div>
-            <span
-              style={{
-                fontFamily: '"Jost", sans-serif',
-                fontSize: '0.6rem',
-                fontWeight: 600,
-                letterSpacing: '0.28em',
-                textTransform: 'uppercase',
-                color: 'rgba(246,196,83,0.65)',
-              }}
-              className="hidden sm:block"
-            >
-              CDC Presents
-            </span>
           </a>
 
           {/* Desktop nav — Jost, wide tracking */}

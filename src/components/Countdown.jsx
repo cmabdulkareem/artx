@@ -41,7 +41,7 @@ export default function Countdown() {
       className="inline-block mb-12 w-full max-w-3xl"
       style={{ borderRadius: '1rem' }}
     >
-      <div className="glass-panel px-6 py-6 md:px-12 md:py-10" style={{ borderRadius: '1rem' }}>
+      <div className="glass-panel px-6 py-6 md:px-12 md:py-10 md:bg-transparent md:backdrop-blur-none md:border-transparent md:shadow-none" style={{ borderRadius: '1rem' }}>
         
         {/* Curiosity Text */}
         <div className="text-center mb-2">
