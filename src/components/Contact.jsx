@@ -96,38 +96,28 @@ export default function Contact() {
           ))}
         </div>
 
-        {/* Map placeholder */}
+        {/* Google Maps Embed */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          whileHover={{ scale: 1.01 }}
-          className="glass-panel glow-border p-2 h-96 flex items-center justify-center relative overflow-hidden"
+          className="glass-panel glow-border p-2 relative overflow-hidden"
         >
-          {/* Animated background */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-accent-pink/10 to-accent-orange/10"
-            animate={{
-              backgroundPosition: ['0% 0%', '100% 100%'],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
-          />
-          
-          <div className="relative z-10 text-center">
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <MapPin className="w-16 h-16 text-accent-gold mx-auto mb-4" />
-            </motion.div>
-            <h3 className="font-heading text-2xl gradient-text-gold mb-2">Municipal Conference Hall</h3>
-            <p className="text-text-secondary">Kasaragod, Kerala, India</p>
-            <p className="text-text-muted text-sm mt-2">Interactive map would be embedded here</p>
+          <div className="mapouter" style={{ position: 'relative', textAlign: 'right', width: '100%', height: '450px' }}>
+            <div className="gmap_canvas" style={{ overflow: 'hidden', background: 'none!important', width: '100%', height: '450px' }}>
+              <iframe
+                className="gmap_iframe"
+                width="100%"
+                height="450"
+                src="https://www.google.com/maps?q=municipal+conference+hall%2C+kasaragod&z=20&t=k&hl=en&output=embed"
+                frameBorder="0"
+                scrolling="no"
+                marginHeight="0"
+                marginWidth="0"
+                title="Municipal Conference Hall, Kasaragod"
+              />
+            </div>
           </div>
         </motion.div>
       </div>
