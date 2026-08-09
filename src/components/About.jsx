@@ -7,12 +7,12 @@ const JOST      = '"Jost", sans-serif';
 
 function SectionDivider() {
   return (
-    <div className="absolute top-0 left-0 right-0 w-full overflow-hidden" style={{ height: '1px' }}>
+    <div className="absolute top-0 left-0 right-0 w-full overflow-visible" style={{ height: '2px', zIndex: 50 }}>
       <div
         className="w-full h-full"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,77,141,0.7) 25%, rgba(255,106,61,0.8) 50%, rgba(255,179,71,0.7) 75%, transparent)',
-          boxShadow: '0 0 20px rgba(255,77,141,0.4), 0 0 40px rgba(255,106,61,0.2)',
+          background: 'linear-gradient(90deg, transparent, rgba(255,77,141,0.9) 25%, rgba(255,106,61,1) 50%, rgba(255,179,71,0.9) 75%, transparent)',
+          boxShadow: '0 0 25px rgba(255,77,141,0.6), 0 0 50px rgba(255,106,61,0.4), 0 0 80px rgba(255,179,71,0.3)',
         }}
       />
     </div>

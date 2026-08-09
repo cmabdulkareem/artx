@@ -125,12 +125,12 @@ export default function Navbar() {
                 />
               </a>
             ))}
-            <a
+            {/* <a
               href="#register"
               className="btn-primary text-white"
             >
               Register
-            </a>
+            </a> */}
           </div>
 
           {/* Mobile button */}
@@ -173,13 +173,13 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
-              <a
+              {/* <a
                 href="#register"
                 onClick={() => setIsMobileOpen(false)}
                 className="btn-primary block text-center text-white mt-4"
               >
                 Register Now
-              </a>
+              </a> */}
             </div>
           </motion.div>
         )}

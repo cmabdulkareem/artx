@@ -25,7 +25,7 @@ const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
 
 /* ─── Arc ring ────────────────────────────────────────────────────────── */
 const ArcRing = () => (
-  <svg viewBox="0 0 1200 500" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-6xl pointer-events-none" fill="none" aria-hidden="true">
+  <svg viewBox="0 0 1200 500" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-6xl pointer-events-none" style={{ zIndex: 1 }} fill="none" aria-hidden="true">
     <defs>
       <radialGradient id="arc-glow" cx="50%" cy="100%" r="70%">
         <stop offset="0%"   stopColor="#ffb347" stopOpacity="0.35" />
@@ -62,30 +62,6 @@ const GridLines = () => (
 );
 
 /* ─── Polygon silhouettes ─────────────────────────────────────────────── */
-const PolygonArtwork = () => (
-  <svg viewBox="0 0 900 220" className="w-full max-w-4xl mx-auto mt-6 opacity-85" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="fig1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff4d8d"/><stop offset="100%" stopColor="#ff6a3d"/></linearGradient>
-      <linearGradient id="fig2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff2f6d"/><stop offset="100%" stopColor="#ffb347"/></linearGradient>
-      <linearGradient id="fig3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff6a3d"/><stop offset="100%" stopColor="#F6C453"/></linearGradient>
-      <filter id="glow-fig"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    {[
-      { d:"M110 200 L140 145 L175 125 L190 95 L160 78 L145 112 L115 103 L100 70 L82 103 L65 95 L82 125 L48 145 L75 200 Z", fill:"url(#fig1)", delay:0.4 },
-      { d:"M290 200 L320 148 L355 130 L368 100 L338 84 L323 116 L295 108 L280 75 L262 108 L246 100 L262 130 L230 148 L258 200 Z", fill:"url(#fig2)", delay:0.55 },
-      { d:"M450 200 L492 138 L538 118 L555 82 L518 62 L498 100 L462 90 L445 52 L428 90 L392 82 L408 118 L368 138 L405 200 Z", fill:"url(#fig1)", delay:0.7 },
-      { d:"M615 200 L645 148 L680 130 L693 100 L663 84 L648 116 L620 108 L605 75 L587 108 L571 100 L587 130 L555 148 L583 200 Z", fill:"url(#fig3)", delay:0.85 },
-      { d:"M800 200 L830 145 L865 125 L878 95 L848 78 L833 112 L805 103 L790 70 L772 103 L755 95 L772 125 L738 145 L765 200 Z", fill:"url(#fig2)", delay:1.0 },
-    ].map((fig, i) => (
-      <motion.path key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.9, y: 0 }}
-        transition={{ duration: 1.2, delay: fig.delay }} d={fig.d} fill={fig.fill} filter="url(#glow-fig)" />
-    ))}
-    <motion.circle initial={{ scale:0, opacity:0 }} animate={{ scale:1, opacity:0.28 }} transition={{ duration:1, delay:1.3 }}
-      cx="450" cy="125" r="60" stroke="#ffb347" strokeWidth="1.5" fill="none" />
-    <motion.circle initial={{ scale:0, opacity:0 }} animate={{ scale:1, opacity:0.12 }} transition={{ duration:1, delay:1.5 }}
-      cx="450" cy="125" r="82" stroke="#ff4d8d" strokeWidth="1" fill="none" />
-  </svg>
-);
 
 export default function Hero() {
   const { scrollY } = useScroll();
@@ -127,7 +103,7 @@ export default function Hero() {
       <ArcRing />
 
       {/* ── Content ──────────────────────────────────────────────────── */}
-      <motion.div style={{ y: y1, opacity }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24">
+      <motion.div style={{ y: y1, opacity }} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-56">
         
         {/* Desktop: Logo only (hidden on mobile) */}
         <div className="hidden md:block">
@@ -252,10 +228,10 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.9, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-5 justify-center items-center"
           >
-            <motion.a href="#register" whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}
+            {/* <motion.a href="#register" whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}
               className="btn-primary text-white">
               Register Now
-            </motion.a>
+            </motion.a> */}
             <motion.a href="#events" whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}
               className="px-10 py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm"
               style={{
@@ -268,19 +244,34 @@ export default function Hero() {
             </motion.a>
           </motion.div>
 
-          <PolygonArtwork />
+         
         </div>
       </motion.div>
 
       {/* Scroll indicator */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0"
+        style={{ zIndex: 0 }}>
         <span style={{ fontFamily:JOST, fontSize:'0.6rem', letterSpacing:'0.35em', textTransform:'uppercase', color:'#BFAFB4', fontWeight:500 }}>
           Scroll
         </span>
-        <motion.div animate={{ y: [0, 12, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
-          <ChevronDown className="w-7 h-7" style={{ color: '#ffb347', filter: 'drop-shadow(0 0 8px rgba(255,179,71,0.6))' }} />
-        </motion.div>
+        <div className="relative w-screen h-60">
+          <img
+            src="/afrodesign.png"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+            style={{ 
+              zIndex: -1,
+              filter: 'drop-shadow(0 0 12px rgba(255,179,71,0.5))',
+              maskImage: 'linear-gradient(to bottom, black 0%, black 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 100%)',
+              opacity: 0.2
+            }}
+          />
+          <motion.div animate={{ y: [0, 12, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'relative', zIndex: 1 }} className="flex items-start justify-center h-full pt-1">
+            <ChevronDown className="w-7 h-7" style={{ color: '#ffb347', filter: 'drop-shadow(0 0 8px rgba(255,179,71,0.6))' }} />
+          </motion.div>
+        </div>
       </motion.div>
     </section>
   );

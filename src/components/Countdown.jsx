@@ -37,14 +37,14 @@ export default function Countdown() {
     <motion.div
       initial={{ opacity: 0, y: 40, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.9, delay: 0.65, ease: 'easeOut' }}
-      className="glow-edge-intense inline-block mb-12 w-full max-w-3xl"
+      transition={{ duration: 0.3, delay: 0.35, ease: 'easeOut' }}
+      className="inline-block mb-12 w-full max-w-3xl"
       style={{ borderRadius: '1rem' }}
     >
-      <div className="glass-panel px-6 py-8 md:px-12 md:py-10" style={{ borderRadius: '1rem' }}>
+      <div className="glass-panel px-6 py-6 md:px-12 md:py-10" style={{ borderRadius: '1rem' }}>
         
         {/* Curiosity Text */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-2">
           <p style={{
             fontFamily: JOST,
             fontWeight: 600,
