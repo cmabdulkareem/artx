@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, Gamepad2, Music, Activity, Brain, Palette, Smile, HelpCircle, Mic, Music2, MessageSquare, Volume2, Users, Heart, Star, Video, Sparkles } from 'lucide-react';
+import { Trophy, Gamepad2, Music, Activity, Brain, Palette, Smile, HelpCircle, Mic, Music2, MessageSquare, Volume2, Users, Heart, Star, Video, Clock, Sparkles } from 'lucide-react';
 import SectionTitle from './SectionTitle';
 import { gameEvents, culturalEvents } from '../data/events';
 
@@ -101,6 +101,41 @@ function EventCard({ event, index }) {
                 {event.title}
               </h3>
               <p style={{ fontFamily: JOST, fontWeight: 300, fontSize: '0.95rem', lineHeight: 1.75, color: '#BFAFB4', letterSpacing: '0.01em', marginBottom: '1rem' }}>{event.description}</p>
+              
+              {/* Time display */}
+              {event.time && (
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="w-4 h-4" style={{ color: '#ffb347', filter: 'drop-shadow(0 0 4px rgba(255,179,71,0.6))' }} />
+                  <span
+                    style={{
+                      fontFamily: JOST,
+                      fontWeight: 600,
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      fontSize: '0.65rem',
+                      background: 'linear-gradient(135deg, #F6C453 0%, #E0A52B 100%)',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    {event.time}
+                  </span>
+                </div>
+              )}
+
+              {/* Bullet point details */}
+              {event.details && (
+                <ul className="mb-3 space-y-1.5">
+                  {event.details.map((detail, i) => (
+                    <li key={i} className="flex items-start gap-2" style={{ fontFamily: JOST, fontWeight: 300, fontSize: '0.85rem', color: '#BFAFB4', letterSpacing: '0.01em' }}>
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'linear-gradient(135deg, #ff4d8d, #ff6a3d)', boxShadow: '0 0 6px rgba(255,77,141,0.6)' }} />
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <motion.button
                 whileHover={{ x: 6 }}
                 onClick={() => document.getElementById('rules')?.scrollIntoView({ behavior: 'smooth' })}
@@ -117,27 +152,40 @@ function EventCard({ event, index }) {
   );
 }
 
-function CategoryHeading({ label }) {
+function CategoryHeading({ label, icon: Icon }) {
   return (
-    <motion.h3
+    <motion.div
       initial={{ opacity: 0, x: -40 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="font-heading text-4xl md:text-5xl mb-10"
-      style={{
-        fontFamily: CORMORANT,
-        fontWeight: 600,
-        letterSpacing: '0.06em',
-        background: 'linear-gradient(135deg, #F6C453 0%, #ff6a3d 60%, #E0A52B 100%)',
-        WebkitBackgroundClip: 'text',
-        backgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        filter: 'drop-shadow(0 0 12px rgba(246,196,83,0.35))',
-      }}
+      className="flex items-center gap-4 mb-10"
     >
-      {label}
-    </motion.h3>
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,77,141,0.15), rgba(255,179,71,0.1))',
+          border: '1px solid rgba(255,179,71,0.2)',
+        }}
+      >
+        <Icon className="w-6 h-6" style={{ color: '#ffb347', filter: 'drop-shadow(0 0 6px rgba(255,179,71,0.6))' }} />
+      </div>
+      <h3
+        className="font-heading text-4xl md:text-5xl"
+        style={{
+          fontFamily: CORMORANT,
+          fontWeight: 600,
+          letterSpacing: '0.06em',
+          background: 'linear-gradient(135deg, #F6C453 0%, #ff6a3d 60%, #E0A52B 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          filter: 'drop-shadow(0 0 12px rgba(246,196,83,0.35))',
+        }}
+      >
+        {label}
+      </h3>
+    </motion.div>
   );
 }
 
@@ -173,21 +221,27 @@ export default function Events() {
           subtitle="Discover a diverse range of cultural and game events designed to showcase your talent and celebrate creativity."
         />
 
-        {/* Game Events */}
+        {/* On-Stage Programs */}
         <div className="mb-24">
-          <CategoryHeading label="Game Events" />
+          <CategoryHeading label="On-Stage Programs" icon={Mic} />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {gameEvents.map((event, index) => (
+            {gameEvents.filter(e => e.category === 'On-Stage Programs').map((event, index) => (
+              <EventCard key={event.id} event={event} index={index} />
+            ))}
+            {culturalEvents.filter(e => e.category === 'On-Stage Programs').map((event, index) => (
               <EventCard key={event.id} event={event} index={index} />
             ))}
           </div>
         </div>
 
-        {/* Cultural Events */}
+        {/* Off-Stage Programs */}
         <div>
-          <CategoryHeading label="Cultural Events" />
+          <CategoryHeading label="Off-Stage Programs" icon={Sparkles} />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {culturalEvents.map((event, index) => (
+            {gameEvents.filter(e => e.category === 'Off-Stage Programs').map((event, index) => (
+              <EventCard key={event.id} event={event} index={index} />
+            ))}
+            {culturalEvents.filter(e => e.category === 'Off-Stage Programs').map((event, index) => (
               <EventCard key={event.id} event={event} index={index} />
             ))}
           </div>

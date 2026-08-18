@@ -5,9 +5,7 @@ import { Menu, X } from 'lucide-react';
 const navLinks = [
   { name: 'Home',     href: '#home' },
   { name: 'Events',   href: '#events' },
-  { name: 'Schedule', href: '#schedule' },
   { name: 'Rules',    href: '#rules' },
-  { name: 'Contact',  href: '#contact' },
 ];
 
 export default function Navbar() {
@@ -85,39 +83,35 @@ export default function Navbar() {
 
           {/* Desktop nav — Jost, wide tracking */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="relative group"
-                style={{
-                  fontFamily: '"Jost", sans-serif',
-                  fontWeight: 500,
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  color: '#BFAFB4',
-                  transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-                onMouseLeave={e => e.currentTarget.style.color = '#BFAFB4'}
-              >
-                {link.name}
-                <span
-                  className="absolute -bottom-1 left-0 w-0 h-[1.5px] group-hover:w-full transition-all duration-300 rounded-full"
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="relative group"
                   style={{
-                    background: 'linear-gradient(90deg, #ff4d8d, #ff6a3d)',
-                    boxShadow: '0 0 8px rgba(255,77,141,0.7)',
+                    fontFamily: '"Jost", sans-serif',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: '#BFAFB4',
+                    transition: 'color 0.2s',
                   }}
-                />
-              </a>
-            ))}
-            {/* <a
-              href="#register"
-              className="btn-primary text-white"
-            >
-              Register
-            </a> */}
+                  onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#BFAFB4'}
+                >
+                  {link.name}
+                  <span
+                    className="absolute -bottom-1 left-0 w-0 h-[1.5px] group-hover:w-full transition-all duration-300 rounded-full"
+                    style={{
+                      background: 'linear-gradient(90deg, #ff4d8d, #ff6a3d)',
+                      boxShadow: '0 0 8px rgba(255,77,141,0.7)',
+                    }}
+                  />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Mobile button */}
@@ -160,13 +154,6 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
-              {/* <a
-                href="#register"
-                onClick={() => setIsMobileOpen(false)}
-                className="btn-primary block text-center text-white mt-4"
-              >
-                Register Now
-              </a> */}
             </div>
           </motion.div>
         )}

@@ -5,7 +5,8 @@ export const gameEvents = [
     description: 'Strategic board competition following standard FIDE principles.',
     icon: 'Trophy',
     image: '/chess.jpg',
-    category: 'Game Events',
+    category: 'Off-Stage Programs',
+    time: '01:45–02:30 PM',
   },
   {
     id: 'uno',
@@ -13,7 +14,8 @@ export const gameEvents = [
     description: 'Fast-paced card challenge with knockout rounds.',
     icon: 'Gamepad2',
     image: '/uno.jpg',
-    category: 'Game Events',
+    category: 'Off-Stage Programs',
+    time: '01:00–01:45 PM',
   },
   {
     id: 'musical-chair',
@@ -21,7 +23,8 @@ export const gameEvents = [
     description: 'Classic elimination fun event.',
     image: '/mchai.jpg',
     icon: 'Music',
-    category: 'Game Events',
+    category: 'Off-Stage Programs',
+    time: '10:00–10:30 AM',
   },
   {
     id: 'lemon-spoon',
@@ -29,7 +32,8 @@ export const gameEvents = [
     description: 'Balance, coordination, and speed challenge.',
     image: '/lspoon.jpg',
     icon: 'Activity',
-    category: 'Game Events',
+    category: 'Off-Stage Programs',
+    time: '10:30–11:00 AM',
   },
   {
     id: 'memory-challenge',
@@ -37,7 +41,8 @@ export const gameEvents = [
     image: '/mgame.jpg',
     description: 'Pair-based observation and recall competition.',
     icon: 'Brain',
-    category: 'Game Events',
+    category: 'On-Stage Programs',
+    time: '10:00–10:30 AM',
   },
 ];
 
@@ -48,7 +53,8 @@ export const culturalEvents = [
     description: 'Pair event with creativity, detailing, and presentation judging.',
     image: '/henna.jpg',
     icon: 'Palette',
-    category: 'Cultural Events',
+    category: 'Off-Stage Programs',
+    time: '09:00–10:00 AM',
   },
   {
     id: 'face-painting',
@@ -56,7 +62,8 @@ export const culturalEvents = [
     description: 'Painter + model event focused on technique and visual impact.',
     image: '/fpainting.jpg',
     icon: 'Smile',
-    category: 'Cultural Events',
+    category: 'Off-Stage Programs',
+    time: '01:00–02:00 PM',
   },
   {
     id: 'quiz',
@@ -64,7 +71,8 @@ export const culturalEvents = [
     image: '/quiz.jpg',
     description: 'Current Affairs, Indian Independence, and Geo-Politics.',
     icon: 'HelpCircle',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '10:30–11:00 AM',
   },
   {
     id: 'solo-song',
@@ -72,7 +80,8 @@ export const culturalEvents = [
     image: '/singing.jpg',
     description: 'Live vocal performance with stage presence evaluation.',
     icon: 'Mic',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '12:55–02:10 PM',
   },
   {
     id: 'solo-dance',
@@ -80,7 +89,8 @@ export const culturalEvents = [
     image: '/sdance.jpg',
     description: 'Individual choreography and expression showcase.',
     icon: 'Music2',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '12:00–12:55 PM',
   },
   {
     id: 'speech',
@@ -88,7 +98,8 @@ export const culturalEvents = [
     description: 'Public speaking with confidence and communication focus.',
     image: '/speech.jpg',
     icon: 'MessageSquare',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '09:00–10:00 AM',
   },
   {
     id: 'mimicry',
@@ -96,7 +107,8 @@ export const culturalEvents = [
     image: '/mimicri.jpg',
     description: 'Voice modulation and audience engagement competition.',
     icon: 'Volume2',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: 'TBD',
   },
   {
     id: 'group-song',
@@ -104,7 +116,8 @@ export const culturalEvents = [
     image: '/gsinging.jpg',
     description: '3–7 member live vocal performance.',
     icon: 'Users',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '02:10–02:30 PM',
   },
   {
     id: 'group-dance',
@@ -112,7 +125,8 @@ export const culturalEvents = [
     image: '/gdance.jpg',
     description: '3–7 member choreographed dance performance.',
     icon: 'Users',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '02:30–03:30 PM',
   },
   {
     id: 'oppana',
@@ -120,7 +134,8 @@ export const culturalEvents = [
     image: '/oppana.jpg',
     description: 'Traditional cultural group performance (5–7 members).',
     icon: 'Heart',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: 'TBD',
   },
   {
     id: 'ramp-walk',
@@ -128,7 +143,8 @@ export const culturalEvents = [
     image: '/rampw.jpg',
     description: 'Theme-based fashion and personality presentation.',
     icon: 'Star',
-    category: 'Cultural Events',
+    category: 'On-Stage Programs',
+    time: '11:00–12:00 AM',
   },
   {
     id: 'reel-challenge',
@@ -136,7 +152,13 @@ export const culturalEvents = [
     image: '/reel.jpg',
     description: 'Original 30–60 second creative video competition.',
     icon: 'Video',
-    category: 'Cultural Events',
+    category: 'Off-Stage Programs',
+    time: '09:00 AM–03:30 PM',
+    details: [
+      'Reel Shooting: 09:00 AM–01:30 PM',
+      'Editing: 01:30–03:30 PM',
+      'Submission Deadline: 03:30 PM',
+    ],
   },
 ];
 

@@ -1,32 +1,37 @@
 import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import About from './components/About';
 import Events from './components/Events';
-import Timeline from './components/Timeline';
 import Rules from './components/Rules';
 import Points from './components/Points';
-// import RegisterCTA from './components/RegisterCTA';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
 import MusicController from './components/MusicController';
 
-function App() {
+function AppContent() {
   return (
     <div className="relative">
       <Navbar />
       <main>
-        <Hero />
-        <About />
-        <Events />
-        <Timeline />
-        <Rules />
-        <Points />
-        {/* <RegisterCTA /> */}
-        <Contact />
+        <Routes>
+          <Route path="/" element={<> <Hero /> <About /> <Events /> <Rules /> <Points /> </> } />
+          <Route path="/events" element={<Events />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/rules" element={<Rules />} />
+          <Route path="/points" element={<Points />} />
+        </Routes>
       </main>
       <Footer />
       <MusicController />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 
