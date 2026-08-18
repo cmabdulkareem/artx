@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown, Sparkles, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Countdown from './Countdown';
 
 /* ── Shared style helpers ─────────────────────────────────────────────── */
@@ -65,7 +66,7 @@ const GridLines = () => (
 
 /* ─── Polygon silhouettes ─────────────────────────────────────────────── */
 
-export default function Hero() {
+export default function Hero({ isLiveResults = false }) {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 600], [0, -120]);
   const opacity = useTransform(scrollY, [0, 500], [1, 0.2]);
@@ -251,26 +252,27 @@ export default function Hero() {
           <Countdown />
 
           {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9, ease: 'easeOut' }}
-            className="flex flex-col sm:flex-row gap-5 justify-center items-center"
-          >
-            {/* <motion.a href="#register" whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}
-              className="btn-primary text-white">
-              Register Now
-            </motion.a> */}
-            <motion.a href="#events" whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}
-              className="px-10 py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm"
-              style={{
-                fontFamily: JOST, fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.18em',
-                textTransform: 'uppercase', color: '#ff4d8d',
-                border: '2px solid rgba(255,77,141,0.45)',
-                boxShadow: '0 0 18px rgba(255,77,141,0.12), inset 0 0 18px rgba(255,77,141,0.04)',
-              }}>
-              Explore Events
-            </motion.a>
-          </motion.div>
+          {!isLiveResults && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9, ease: 'easeOut' }}
+              className="flex flex-col sm:flex-row gap-5 justify-center items-center"
+            >
+              <motion.div whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.96 }}>
+                <Link
+                  to="/live-results"
+                  className="inline-block px-10 py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm"
+                  style={{
+                    fontFamily: JOST, fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.18em',
+                    textTransform: 'uppercase', color: '#ff4d8d',
+                    border: '2px solid rgba(255,77,141,0.45)',
+                    boxShadow: '0 0 18px rgba(255,77,141,0.12), inset 0 0 18px rgba(255,77,141,0.04)',
+                  }}>
+                  Live Results
+                </Link>
+              </motion.div>
+            </motion.div>
+          )}
 
 
         </div>

@@ -73,24 +73,27 @@ export default function Countdown() {
           {timeUnits.map((unit, index, arr) => (
             <div key={unit.label} className="flex items-center">
               <div className="text-center w-16 md:w-24">
-                <motion.div
-                  key={unit.value}
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
-                  style={{
-                    fontFamily: '"Bebas Neue", monospace',
-                    fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-                    background: 'linear-gradient(135deg, #ff4d8d 0%, #ff2f6d 20%, #ff6a3d 55%, #ffb347 100%)',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    filter: 'drop-shadow(0 0 12px rgba(255,106,61,0.4))',
-                    lineHeight: 1
-                  }}
-                >
-                  {String(unit.value).padStart(2, '0')}
-                </motion.div>
+                <div className="flex items-center justify-center overflow-hidden" style={{ height: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+                  <motion.div
+                    key={unit.value}
+                    initial={{ y: -10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    style={{
+                      fontFamily: '"Bebas Neue", monospace',
+                      fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                      background: 'linear-gradient(135deg, #ff4d8d 0%, #ff2f6d 20%, #ff6a3d 55%, #ffb347 100%)',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      filter: 'drop-shadow(0 0 12px rgba(255,106,61,0.4))',
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {String(unit.value).padStart(2, '0')}
+                  </motion.div>
+                </div>
                 <div style={{
                   fontFamily: JOST,
                   fontWeight: 600,

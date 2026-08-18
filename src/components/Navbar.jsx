@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const navLinks = [
-  { name: 'Home',     href: '#home' },
-  { name: 'Events',   href: '#events' },
-  { name: 'Rules',    href: '#rules' },
-];
-
-export default function Navbar() {
+export default function Navbar({ isLiveResults }) {
   const [isScrolled, setIsScrolled]   = useState(false);
   const [showLogo, setShowLogo]       = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Define navLinks inside the component so it can access the prop
+  const navLinks = [
+    { name: 'Home',     href: isLiveResults ? '/' : '#home' },
+    { name: 'Events',   href: isLiveResults ? '/events' : '#events' },
+    { name: 'Rules',    href: isLiveResults ? '/rules' : '#rules' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,6 +113,32 @@ export default function Navbar() {
                   />
                 </a>
               ))}
+              {!isLiveResults && (
+                <Link
+                  to="/live-results"
+                  className="relative group"
+                  style={{
+                    fontFamily: '"Jost", sans-serif',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: '#ff4d8d',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#ff4d8d'}
+                >
+                  Live Results
+                  <span
+                    className="absolute -bottom-1 left-0 w-0 h-[1.5px] group-hover:w-full transition-all duration-300 rounded-full"
+                    style={{
+                      background: 'linear-gradient(90deg, #ff4d8d, #ff6a3d)',
+                      boxShadow: '0 0 8px rgba(255,77,141,0.7)',
+                    }}
+                  />
+                </Link>
+              )}
             </div>
           </div>
 
@@ -154,6 +182,24 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
+              {!isLiveResults && (
+                <Link
+                  to="/live-results"
+                  onClick={() => setIsMobileOpen(false)}
+                  style={{
+                    display: 'block',
+                    fontFamily: '"Jost", sans-serif',
+                    fontWeight: 500,
+                    fontSize: '1.05rem',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: '#ff4d8d',
+                    marginTop: '0.5rem',
+                  }}
+                >
+                  Live Results
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

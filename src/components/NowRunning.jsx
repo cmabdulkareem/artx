@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Sparkles, Radio } from 'lucide-react';
+import { Mic, Sparkles } from 'lucide-react';
 
 const CORMORANT = '"Cormorant Garamond", serif';
 const JOST      = '"Jost", sans-serif';
@@ -66,10 +66,10 @@ export default function NowRunning() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="inline-block mb-12 w-full max-w-3xl"
+      className="inline-block mb-12 w-full max-w-3xl overflow-x-hidden"
       style={{ borderRadius: '1rem' }}
     >
-      <div className="glass-panel px-6 py-6 md:px-12 md:py-10" style={{ borderRadius: '1rem' }}>
+      <div className="glass-panel px-4 py-5 sm:px-6 sm:py-6 md:px-12 md:py-10" style={{ borderRadius: '1rem' }}>
         {/* Live badge */}
         <div className="flex justify-center items-center gap-2 mb-4">
           <span className="relative flex h-3 w-3">
