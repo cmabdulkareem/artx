@@ -533,12 +533,12 @@ export default function MemoryMaster() {
                   <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: false })}
                     className={`text-[9px] font-bold uppercase tracking-wider cursor-pointer px-2 py-1 rounded-lg border transition-all active:scale-95 ${currentQuestionIndex === -1 && !showAnswer ? 'border-[#ffb347] text-[#ffb347] bg-[#ffb347]/10' : 'border-white/10 text-white/40'}`}
                     style={{ fontFamily: JOST }}>
-                    Questions
+                    Show Questions
                   </button>
                   <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: true })}
                     className={`text-[9px] font-bold uppercase tracking-wider cursor-pointer px-2 py-1 rounded-lg border transition-all active:scale-95 ${currentQuestionIndex === -1 && showAnswer ? 'border-green-400 text-green-400 bg-green-500/10' : 'border-white/10 text-white/40'}`}
                     style={{ fontFamily: JOST }}>
-                    Answers
+                    Reveal Answers
                   </button>
                 </div>
               </div>
