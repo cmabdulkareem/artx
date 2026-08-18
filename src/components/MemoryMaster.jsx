@@ -1,0 +1,427 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+
+const CORMORANT = '"Cormorant Garamond", serif';
+const JOST      = '"Jost", sans-serif';
+const API_BASE  = import.meta.env.VITE_API_URL || '';
+
+const round1Objects = [
+  { id: 1,  label: "Bicycle",     emoji: "🚲" },
+  { id: 2,  label: "Apple",       emoji: "🍎" },
+  { id: 3,  label: "Umbrella",    emoji: "☂️"  },
+  { id: 4,  label: "Book",        emoji: "📘" },
+  { id: 5,  label: "Chair",       emoji: "🪑" },
+  { id: 6,  label: "Star",        emoji: "⭐" },
+  { id: 7,  label: "Fish",        emoji: "🐟" },
+  { id: 8,  label: "Drum",        emoji: "🥁" },
+  { id: 9,  label: "Shoe",        emoji: "👟" },
+  { id: 10, label: "Lantern",     emoji: "🏮" },
+  { id: 11, label: "Kite",        emoji: "🪁" },
+  { id: 12, label: "Lock",        emoji: "🔒" },
+];
+
+const round2Objects = [
+  { id: 1,  label: "Camera",      emoji: "📷" },
+  { id: 2,  label: "Cactus",      emoji: "🌵" },
+  { id: 3,  label: "Trophy",      emoji: "🏆" },
+  { id: 4,  label: "Rocket",      emoji: "🚀" },
+  { id: 5,  label: "Diamond",     emoji: "💎" },
+  { id: 6,  label: "Globe",       emoji: "🌍" },
+  { id: 7,  label: "Hourglass",   emoji: "⏳" },
+  { id: 8,  label: "Crown",       emoji: "👑" },
+  { id: 9,  label: "Compass",     emoji: "🧭" },
+  { id: 10, label: "Anchor",      emoji: "⚓" },
+  { id: 11, label: "Flame",       emoji: "🔥" },
+  { id: 12, label: "Leaf",        emoji: "🍃" },
+  { id: 13, label: "Candle",      emoji: "🕯️"  },
+  { id: 14, label: "Flag",        emoji: "🚩" },
+];
+
+const round3Objects = [
+  "Pizza","Button","Plate","CD","Coin","Clock","Biscuit","Wheel",
+  "Badge","Donut","Diya","Magnet","Bottle Cap","Coconut Slice","Target","Dosa"
+];
+
+const round1Questions = [
+  { id: 1, text: "What number was with the Bicycle?" },
+  { id: 2, text: "What was the 5th image shown?" },
+  { id: 3, text: "Which item had the number 8?" },
+  { id: 4, text: "What was shown right after the Book?" },
+  { id: 5, text: "What was the last item in the sequence?" },
+  { id: 6, text: "What number was the Fish?" },
+  { id: 7, text: "What was the item at position 11?" },
+  { id: 8, text: "Which item came just before the Lock?" },
+];
+
+const round2Questions = [
+  { id: 1, text: "What was between the Trophy and the Diamond?" },
+  { id: 2, text: "What was the 9th item shown?" },
+  { id: 3, text: "What came immediately before the Crown?" },
+  { id: 4, text: "What number was given to the Anchor?" },
+  { id: 5, text: "What was the very first item shown?" },
+  { id: 6, text: "What was between the Globe and Hourglass?" },
+  { id: 7, text: "Name the item that came after the Flame." },
+  { id: 8, text: "How many items were shown in total?" },
+  { id: 9, text: "What was the 3rd item and what did it represent?" },
+  { id: 10,text: "Name any two items that came after Compass." },
+];
+
+const round3Questions = [
+  { id: 1, text: "What was the 7th object?" },
+  { id: 2, text: "What came immediately after CD?" },
+  { id: 3, text: "What was the 14th object?" },
+  { id: 4, text: "What came before Donut?" },
+  { id: 5, text: "What was the 3rd food item?" },
+  { id: 6, text: "What was between Coin and Biscuit?" },
+  { id: 7, text: "What was the last object?" },
+  { id: 8, text: "Which object had a hole in the middle?" },
+  { id: 9, text: "BONUS: Write the complete sequence of all 16 objects." },
+];
+
+const roundMeta = [
+  { round: 1, label: "Round 1", difficulty: "Easy",      subtitle: "Image + Number", color: "#22C55E", bg: "rgba(34,197,94,0.1)"  },
+  { round: 2, label: "Round 2", difficulty: "Medium",    subtitle: "Image Sequence", color: "#F59E0B", bg: "rgba(245,158,11,0.1)" },
+  { round: 3, label: "Round 3", difficulty: "Difficult", subtitle: "Text Positions", color: "#EF4444", bg: "rgba(239,68,68,0.1)"  },
+];
+
+function getObjects(round)   { return round === 1 ? round1Objects   : round === 2 ? round2Objects   : round3Objects;   }
+function getQuestions(round) { return round === 1 ? round1Questions : round === 2 ? round2Questions : round3Questions; }
+
+export default function MemoryMaster() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [accessCode, setAccessCode]           = useState('');
+  const [authError, setAuthError]             = useState('');
+
+  const [currentRound,         setCurrentRound]         = useState(1);
+  const [currentStage,         setCurrentStage]         = useState('lobby');
+  const [currentObjectIndex,   setCurrentObjectIndex]   = useState(-1);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
+  const [showAnswer,           setShowAnswer]           = useState(false);
+  const [timerSeconds,         setTimerSeconds]         = useState(120);
+  const [timerRunning,         setTimerRunning]         = useState(false);
+  const [announcedWinner,      setAnnouncedWinner]      = useState('');
+
+  const [winnerInput, setWinnerInput] = useState('');
+
+  // Local countdown for display
+  useEffect(() => {
+    if (!timerRunning || timerSeconds <= 0) return;
+    const t = setInterval(() => setTimerSeconds(p => (p <= 1 ? 0 : p - 1)), 1000);
+    return () => clearInterval(t);
+  }, [timerRunning, timerSeconds]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('memory_master_pass') === '5626') setIsAuthenticated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const fetch_ = () => {
+      fetch(`${API_BASE}/api/memory-state`)
+        .then(r => r.json())
+        .then(d => {
+          if (!d) return;
+          setCurrentRound(d.currentRound ?? 1);
+          setCurrentStage(d.currentStage ?? 'lobby');
+          setCurrentObjectIndex(d.currentObjectIndex ?? -1);
+          setCurrentQuestionIndex(d.currentQuestionIndex ?? -1);
+          setShowAnswer(d.showAnswer ?? false);
+          setAnnouncedWinner(d.announcedWinner ?? '');
+          if (!timerRunning) setTimerSeconds(d.timerSeconds ?? 120);
+          setTimerRunning(d.timerRunning ?? false);
+        })
+        .catch(() => {});
+    };
+    fetch_();
+    const iv = setInterval(fetch_, 1500);
+    return () => clearInterval(iv);
+  }, [isAuthenticated, timerRunning]);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (accessCode === '5626') {
+      sessionStorage.setItem('memory_master_pass', '5626');
+      setIsAuthenticated(true);
+    } else {
+      setAuthError('Invalid Access Code');
+    }
+  };
+
+  const push = async (updates) => {
+    const password = '5626';
+    try {
+      const res = await fetch(`${API_BASE}/api/memory-state/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...updates, password })
+      });
+      if (res.ok) {
+        const d = await res.json();
+        setCurrentRound(d.currentRound);
+        setCurrentStage(d.currentStage);
+        setCurrentObjectIndex(d.currentObjectIndex);
+        setCurrentQuestionIndex(d.currentQuestionIndex);
+        setShowAnswer(d.showAnswer);
+        setAnnouncedWinner(d.announcedWinner);
+        setTimerSeconds(d.timerSeconds);
+        setTimerRunning(d.timerRunning);
+      }
+    } catch (e) { console.error(e); }
+  };
+
+  const switchRound = (r) => push({ currentRound: r, currentStage: 'lobby', currentObjectIndex: -1, currentQuestionIndex: -1, showAnswer: false, timerRunning: false, announcedWinner: '' });
+  const switchStage = (s) => push({ currentStage: s, currentObjectIndex: -1, currentQuestionIndex: -1, showAnswer: false, timerRunning: false });
+
+  const objects   = getObjects(currentRound);
+  const questions = getQuestions(currentRound);
+  const isImageRound = currentRound <= 2;
+  const meta      = roundMeta[currentRound - 1];
+  const formatTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+
+  // ── AUTH ──
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center p-4"
+        style={{ background: 'radial-gradient(ellipse 120% 80% at 50% 0%, #2a0516 0%, #1a020d 40%, #0e0108 100%)' }}>
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-md rounded-2xl border border-white/10 p-6 shadow-2xl"
+          style={{ background: 'linear-gradient(135deg, rgba(25,4,15,0.95) 0%, rgba(14,1,8,0.98) 100%)', backdropFilter: 'blur(28px)' }}>
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold tracking-wider"
+              style={{ fontFamily: CORMORANT, background: 'linear-gradient(135deg, #F6C453, #ff6a3d)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Memory Console
+            </h1>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input type="password" placeholder="••••" value={accessCode} onChange={e => setAccessCode(e.target.value)}
+              className="w-full bg-black/60 border border-white/10 text-white rounded-lg px-4 py-3 text-center text-xl tracking-widest outline-none"
+              style={{ fontFamily: JOST }} required />
+            {authError && <p className="text-red-500 text-xs text-center">{authError}</p>}
+            <button type="submit" className="w-full text-white rounded-full py-3.5 text-xs font-bold uppercase tracking-wider cursor-pointer"
+              style={{ fontFamily: JOST, background: 'linear-gradient(135deg, #ff4d8d, #ff6a3d)' }}>
+              Unlock Console
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── MAIN CONSOLE ──
+  return (
+    <div className="min-h-screen w-full flex flex-col relative" style={{ background: '#0e0108', color: '#E8D9DD' }}>
+
+      {/* Header */}
+      <header className="w-full px-4 py-3 border-b border-white/5 flex justify-between items-center bg-black/20">
+        <span className="text-sm font-bold" style={{ fontFamily: CORMORANT, color: '#F6C453' }}>Memory Console</span>
+        <button onClick={() => { sessionStorage.removeItem('memory_master_pass'); setIsAuthenticated(false); }}
+          className="px-3 py-1 rounded-full border border-white/10 text-white/50 text-[9px] uppercase font-bold tracking-wider cursor-pointer"
+          style={{ fontFamily: JOST }}>Lock</button>
+      </header>
+
+      <main className="flex-1 p-4 space-y-5 max-w-md mx-auto w-full pb-32">
+
+        {/* Winner Active Banner */}
+        {announcedWinner && (
+          <div className="p-4 rounded-xl border border-green-500/20 bg-green-500/5 text-center space-y-2">
+            <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest">Active Winner</span>
+            <h4 className="text-white text-lg font-bold" style={{ fontFamily: JOST }}>{announcedWinner}</h4>
+            <button onClick={() => { setWinnerInput(''); push({ announcedWinner: '' }); }}
+              className="px-4 py-1 text-[9px] font-bold text-red-400 border border-red-500/30 bg-red-500/5 rounded-full uppercase cursor-pointer">
+              Clear Screen
+            </button>
+          </div>
+        )}
+
+        {/* 1. ROUND SELECTOR */}
+        <div className="space-y-2">
+          <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Active Round</label>
+          <div className="grid grid-cols-3 gap-2">
+            {roundMeta.map(r => (
+              <button key={r.round} onClick={() => switchRound(r.round)}
+                className="py-3 px-1 rounded-lg border text-center font-bold text-[10px] uppercase tracking-wide cursor-pointer transition-colors"
+                style={{
+                  fontFamily: JOST,
+                  background: currentRound === r.round ? r.bg : 'rgba(255,255,255,0.02)',
+                  borderColor: currentRound === r.round ? r.color : 'rgba(255,255,255,0.05)',
+                  color: currentRound === r.round ? r.color : '#BFAFB4',
+                }}>
+                <div>{r.label}</div>
+                <div className="opacity-60 text-[8px] mt-0.5">{r.difficulty}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. STAGE SWITCHER */}
+        <div className="space-y-2">
+          <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Switch Stage</label>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: 'lobby',     label: '① Lobby'             },
+              { id: 'objects',   label: '② Show Objects'       },
+              { id: 'drawing',   label: '③ Drawing Timer'      },
+              { id: 'questions', label: '④ Questions'          },
+              { id: 'answers',   label: '⑤ Reveal Sequence',   full: true },
+            ].map(s => (
+              <button key={s.id} onClick={() => switchStage(s.id)}
+                className={`py-3 px-2 rounded-lg border text-center font-bold text-xs uppercase cursor-pointer transition-colors ${s.full ? 'col-span-2' : ''}`}
+                style={{
+                  fontFamily: JOST,
+                  background: currentStage === s.id ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
+                  borderColor: currentStage === s.id ? '#F6C453' : 'rgba(255,255,255,0.05)',
+                  color: currentStage === s.id ? '#F6C453' : '#BFAFB4',
+                }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 3a. OBJECT CONTROLS (stages objects) */}
+        {currentStage === 'objects' && (
+          <div className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.01]">
+            <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
+              Object Selector — {meta.label} ({objects.length} items)
+            </label>
+            <button onClick={() => push({ currentObjectIndex: -1 })}
+              className="w-full py-2 rounded text-xs font-bold uppercase border cursor-pointer"
+              style={{ fontFamily: JOST, background: currentObjectIndex === -1 ? 'rgba(255,77,141,0.15)' : 'rgba(255,255,255,0.02)', borderColor: currentObjectIndex === -1 ? '#ff4d8d' : 'rgba(255,255,255,0.05)', color: currentObjectIndex === -1 ? '#ff4d8d' : '#BFAFB4' }}>
+              Show All {objects.length} {isImageRound ? 'Images' : 'Objects'}
+            </button>
+
+            <div className={`grid gap-1.5 ${isImageRound ? 'grid-cols-6' : 'grid-cols-4'}`}>
+              {objects.map((obj, i) => (
+                <button key={i} onClick={() => push({ currentObjectIndex: i })}
+                  className="py-2 rounded text-[10px] font-bold cursor-pointer transition-colors"
+                  style={{
+                    background: currentObjectIndex === i ? 'rgba(246,196,83,0.2)' : 'rgba(255,255,255,0.02)',
+                    border: currentObjectIndex === i ? '1px solid #F6C453' : '1px solid rgba(255,255,255,0.05)',
+                    color: currentObjectIndex === i ? '#F6C453' : '#fff'
+                  }}>
+                  #{i + 1}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button onClick={() => currentObjectIndex > 0 && push({ currentObjectIndex: currentObjectIndex - 1 })}
+                disabled={currentObjectIndex <= 0}
+                className="py-2.5 bg-white/5 disabled:opacity-20 text-white font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
+                ◀ Prev
+              </button>
+              <button onClick={() => currentObjectIndex < objects.length - 1 && push({ currentObjectIndex: currentObjectIndex + 1 })}
+                disabled={currentObjectIndex >= objects.length - 1}
+                className="py-2.5 bg-white/5 disabled:opacity-20 text-[#F6C453] font-bold text-xs uppercase rounded border border-[#F6C453]/20 cursor-pointer">
+                Next ▶
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 3b. TIMER CONTROLS */}
+        {currentStage === 'drawing' && (
+          <div className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.01] text-center">
+            <label className="block text-left text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Drawing Timer</label>
+            <div className="text-5xl font-mono font-bold text-white py-2">{formatTime(timerSeconds)}</div>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => push({ timerRunning: true, timerSeconds })} disabled={timerRunning || timerSeconds <= 0}
+                className="py-3 bg-green-600 disabled:opacity-30 text-white font-bold text-xs uppercase rounded-lg cursor-pointer">
+                ▶ Start
+              </button>
+              <button onClick={() => push({ timerRunning: false, timerSeconds })} disabled={!timerRunning}
+                className="py-3 bg-yellow-600 disabled:opacity-30 text-white font-bold text-xs uppercase rounded-lg cursor-pointer">
+                ⏸ Pause
+              </button>
+              <button onClick={() => push({ timerRunning: false, timerSeconds: 120 })}
+                className="py-2 bg-white/5 text-[#BFAFB4] font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
+                Reset 2m
+              </button>
+              <button onClick={() => push({ timerRunning: false, timerSeconds: 180 })}
+                className="py-2 bg-white/5 text-[#BFAFB4] font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
+                Reset 3m
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 3c. QUESTION LIST (stage: questions) */}
+        {currentStage === 'questions' && (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
+                Questions — {meta.label}
+              </label>
+              <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: false })}
+                className="text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                style={{ fontFamily: JOST, color: currentQuestionIndex === -1 ? '#ffb347' : '#6B7280' }}>
+                Show All
+              </button>
+            </div>
+            <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 border border-white/5 rounded-xl p-2 bg-black/30">
+              {questions.map((q, i) => (
+                <button key={q.id} onClick={() => push({ currentQuestionIndex: i, showAnswer: false })}
+                  className="w-full text-left p-3 rounded-lg border text-xs transition-colors flex items-start gap-2 cursor-pointer"
+                  style={{
+                    background: currentQuestionIndex === i ? 'rgba(255,77,141,0.08)' : 'transparent',
+                    borderColor: currentQuestionIndex === i ? 'rgba(255,77,141,0.4)' : 'rgba(255,255,255,0.03)',
+                    color: currentQuestionIndex === i ? '#ff4d8d' : '#E8D9DD',
+                  }}>
+                  <span className="font-bold text-[10px] opacity-50 bg-white/5 px-1.5 py-0.5 rounded shrink-0">Q{q.id}</span>
+                  <span className="whitespace-normal break-words">{q.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 4. WINNER ANNOUNCER */}
+        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.01] space-y-3">
+          <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
+            Announce Winner
+          </label>
+          <form onSubmit={(e) => { e.preventDefault(); if (winnerInput.trim()) push({ announcedWinner: winnerInput.trim() }); }} className="flex gap-2">
+            <input type="text" placeholder="Team / Name..." value={winnerInput}
+              onChange={e => setWinnerInput(e.target.value)}
+              className="flex-1 bg-black/60 border border-white/10 text-white rounded-lg px-3 py-2 text-sm outline-none focus:border-[#ff4d8d]/50"
+              style={{ fontFamily: JOST }} />
+            <button type="submit"
+              className="bg-[#ff4d8d] hover:opacity-90 text-white font-bold text-xs px-4 py-2 rounded-lg uppercase tracking-wider transition-opacity cursor-pointer"
+              style={{ fontFamily: JOST }}>
+              Go
+            </button>
+          </form>
+        </div>
+
+      </main>
+
+      {/* Fixed Bottom — Question Controls */}
+      {currentStage === 'questions' && currentQuestionIndex !== -1 && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-[#0e0108]/95 backdrop-blur-md z-40 max-w-md mx-auto">
+          <div className="space-y-2">
+            <div className="flex justify-between text-[10px] text-white/40 uppercase font-bold" style={{ fontFamily: JOST }}>
+              <span>Q{currentQuestionIndex + 1} of {questions.length}</span>
+              <span className={showAnswer ? 'text-green-400' : 'text-yellow-400'}>{showAnswer ? 'Visible' : 'Hidden'}</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={() => currentQuestionIndex > 0 && push({ currentQuestionIndex: currentQuestionIndex - 1, showAnswer: false })}
+                disabled={currentQuestionIndex === 0}
+                className="py-3 bg-white/5 disabled:opacity-20 text-white text-center font-bold text-xs uppercase rounded-lg border border-white/10 cursor-pointer"
+                style={{ fontFamily: JOST }}>◀ Prev</button>
+              <button onClick={() => push({ showAnswer: !showAnswer })}
+                className="py-3 text-center font-bold text-xs uppercase rounded-lg cursor-pointer"
+                style={{ fontFamily: JOST, background: showAnswer ? 'linear-gradient(135deg,#10b981,#059669)' : 'linear-gradient(135deg,#ff4d8d,#ff6a3d)', color: '#fff' }}>
+                {showAnswer ? 'Hide' : 'Answer'}
+              </button>
+              <button onClick={() => currentQuestionIndex < questions.length - 1 && push({ currentQuestionIndex: currentQuestionIndex + 1, showAnswer: false })}
+                disabled={currentQuestionIndex === questions.length - 1}
+                className="py-3 bg-white/5 disabled:opacity-20 text-[#F6C453] text-center font-bold text-xs uppercase rounded-lg border border-[#F6C453]/20 cursor-pointer"
+                style={{ fontFamily: JOST }}>Next ▶</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

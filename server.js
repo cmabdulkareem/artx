@@ -57,6 +57,20 @@ const quizStateSchema = new mongoose.Schema({
 
 const QuizState = mongoose.model('QuizState', quizStateSchema);
 
+const memoryStateSchema = new mongoose.Schema({
+  key: { type: String, default: 'active_state', unique: true },
+  currentRound: { type: Number, default: 1 }, // 1, 2, or 3
+  currentStage: { type: String, default: 'lobby' }, // lobby, objects, drawing, questions, answers, winner
+  currentObjectIndex: { type: Number, default: -1 }, // -1 means show all, 0+ for one by one
+  currentQuestionIndex: { type: Number, default: -1 }, // -1 means show all, 0+ for one by one
+  showAnswer: { type: Boolean, default: false },
+  timerSeconds: { type: Number, default: 120 },
+  timerRunning: { type: Boolean, default: false },
+  announcedWinner: { type: String, default: '' }
+});
+
+const MemoryState = mongoose.model('MemoryState', memoryStateSchema);
+
 // Helper to seed initial data if database is empty
 async function seedInitialData() {
   const count = await Result.countDocuments();
@@ -102,6 +116,12 @@ async function seedInitialData() {
   if (quizStateCount === 0) {
     await QuizState.create({ key: 'active_state' });
     console.log('Seeded default quiz state in database.');
+  }
+
+  const memoryStateCount = await MemoryState.countDocuments();
+  if (memoryStateCount === 0) {
+    await MemoryState.create({ key: 'active_state' });
+    console.log('Seeded default memory state in database.');
   }
 }
 
@@ -178,6 +198,48 @@ app.post('/api/quiz-state/update', async (req, res) => {
     res.json(state);
   } catch (error) {
     res.status(500).json({ message: 'Error updating quiz state', error });
+  }
+});
+
+// Memory State API Routes
+app.get('/api/memory-state', async (req, res) => {
+  try {
+    let state = await MemoryState.findOne({ key: 'active_state' });
+    if (!state) {
+      state = await MemoryState.create({ key: 'active_state' });
+    }
+    res.json(state);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching memory state', error });
+  }
+});
+
+app.post('/api/memory-state/update', async (req, res) => {
+  const { currentRound, currentStage, currentObjectIndex, currentQuestionIndex, showAnswer, timerSeconds, timerRunning, announcedWinner, password } = req.body;
+
+  if (password !== '5626') {
+    return res.status(401).json({ message: 'Unauthorized: Invalid password' });
+  }
+
+  try {
+    let state = await MemoryState.findOne({ key: 'active_state' });
+    if (!state) {
+      state = new MemoryState({ key: 'active_state' });
+    }
+
+    if (currentRound !== undefined) state.currentRound = currentRound;
+    if (currentStage !== undefined) state.currentStage = currentStage;
+    if (currentObjectIndex !== undefined) state.currentObjectIndex = currentObjectIndex;
+    if (currentQuestionIndex !== undefined) state.currentQuestionIndex = currentQuestionIndex;
+    if (showAnswer !== undefined) state.showAnswer = showAnswer;
+    if (timerSeconds !== undefined) state.timerSeconds = timerSeconds;
+    if (timerRunning !== undefined) state.timerRunning = timerRunning;
+    if (announcedWinner !== undefined) state.announcedWinner = announcedWinner;
+
+    await state.save();
+    res.json(state);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating memory state', error });
   }
 });
 

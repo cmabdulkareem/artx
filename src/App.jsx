@@ -10,10 +10,12 @@ import MusicController from './components/MusicController';
 import LiveResults from './components/LiveResults';
 import Quiz from './components/Quiz';
 import QuizMaster from './components/QuizMaster';
+import MemoryChallenge from './components/MemoryChallenge';
+import MemoryMaster from './components/MemoryMaster';
 
 function AppContent() {
   const location = useLocation();
-  const isCleanPage = location.pathname === '/live-results' || location.pathname === '/quiz' || location.pathname === '/quiz-master';
+  const isCleanPage = ['/live-results', '/quiz', '/quiz-master', '/memory-challenge', '/memory-master'].includes(location.pathname);
 
   return (
     <div className="relative">
@@ -28,6 +30,8 @@ function AppContent() {
           <Route path="/live-results" element={<LiveResults />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quiz-master" element={<QuizMaster />} />
+          <Route path="/memory-challenge" element={<MemoryChallenge />} />
+          <Route path="/memory-master" element={<MemoryMaster />} />
         </Routes>
       </main>
       {!isCleanPage && <Footer />}
