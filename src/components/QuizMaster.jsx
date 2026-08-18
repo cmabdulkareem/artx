@@ -274,7 +274,7 @@ export default function QuizMaster() {
         </div>
         <button
           onClick={handleLogout}
-          className="px-3 py-1 rounded-full border border-white/10 text-white/50 hover:text-white text-[9px] uppercase font-bold tracking-wider transition-colors cursor-pointer"
+          className="px-3 py-1.5 rounded-full border border-white/10 text-white/50 hover:text-white text-[9px] uppercase font-bold tracking-wider transition-colors cursor-pointer active:scale-95"
           style={{ fontFamily: JOST }}
         >
           Lock
@@ -282,16 +282,16 @@ export default function QuizMaster() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 p-4 space-y-6 max-w-md mx-auto w-full pb-36">
+      <main className="flex-1 p-4 space-y-6 max-w-md mx-auto w-full pb-48">
         
         {/* Active Winner Banner Block */}
         {announcedWinner && (
-          <div className="p-4 rounded-xl border border-green-500/20 bg-green-500/5 text-center space-y-2">
-            <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest">Active Winner Announcement</span>
-            <h4 className="text-white text-lg font-bold" style={{ fontFamily: JOST }}>{announcedWinner}</h4>
+          <div className="p-4 rounded-2xl border border-green-500/25 bg-green-500/10 text-center space-y-3 shadow-xl backdrop-blur-md">
+            <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest block">Active Winner announced</span>
+            <h4 className="text-white text-xl font-bold font-mono tracking-wider">{announcedWinner}</h4>
             <button
               onClick={handleClearWinner}
-              className="px-4 py-1 text-[9px] font-bold text-red-400 border border-red-500/30 bg-red-500/5 rounded-full uppercase tracking-wider"
+              className="px-6 py-2 text-xs font-bold text-red-400 border border-red-500/30 bg-red-500/10 rounded-full uppercase tracking-wider cursor-pointer active:scale-95 transition-transform"
             >
               Clear Screen
             </button>
@@ -299,7 +299,7 @@ export default function QuizMaster() {
         )}
 
         {/* 1. Round Selectors */}
-        <div className="space-y-2">
+        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-3 shadow-lg">
           <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
             Select Round (Start/Switch)
           </label>
@@ -310,15 +310,16 @@ export default function QuizMaster() {
                 <button
                   key={idx}
                   onClick={() => startRound(idx)}
-                  className="py-3 px-1 rounded-lg border text-center font-bold text-xs uppercase transition-colors cursor-pointer"
+                  className="py-3 px-1.5 rounded-xl border text-center font-bold text-xs uppercase transition-all cursor-pointer min-h-[56px] active:scale-95 flex flex-col items-center justify-center"
                   style={{
                     fontFamily: JOST,
-                    background: isActive ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
+                    background: isActive ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.01)',
                     borderColor: isActive ? '#F6C453' : 'rgba(255,255,255,0.05)',
                     color: isActive ? '#F6C453' : '#BFAFB4',
+                    boxShadow: isActive ? '0 4px 12px rgba(246,196,83,0.15)' : 'none'
                   }}
                 >
-                  Round {idx + 1}
+                  <span>Round {idx + 1}</span>
                 </button>
               );
             })}
@@ -326,15 +327,15 @@ export default function QuizMaster() {
         </div>
 
         {/* 2. Questions Directory for current Round */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
+        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-3 shadow-lg">
+          <div className="flex justify-between items-center border-b border-white/5 pb-2">
             <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
               {currentRound.roundName.split(' – ')[1]} Directory
             </label>
             {!isLobby && (
               <button
                 onClick={exitToRounds}
-                className="text-[10px] text-[#ff4d8d] font-bold uppercase tracking-wider cursor-pointer"
+                className="text-[9px] text-[#ff4d8d] bg-[#ff4d8d]/10 px-2 py-1 rounded-lg border border-[#ff4d8d]/25 font-bold uppercase tracking-wider cursor-pointer active:scale-95"
                 style={{ fontFamily: JOST }}
               >
                 Send to Lobby
@@ -342,22 +343,22 @@ export default function QuizMaster() {
             )}
           </div>
 
-          <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1 border border-white/5 rounded-xl p-2 bg-black/30">
+          <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1 p-1 bg-black/40 rounded-xl">
             {currentRound.questions.map((q, idx) => {
               const isSelected = currentQuestionIndex === idx;
               return (
                 <button
                   key={q.id}
                   onClick={() => selectQuestion(idx)}
-                  className="w-full text-left p-3 rounded-lg border text-xs transition-colors flex items-start gap-2 cursor-pointer"
+                  className="w-full text-left p-3.5 rounded-xl border text-xs transition-all flex items-start gap-2.5 cursor-pointer active:scale-[0.98]"
                   style={{
                     background: isSelected ? 'rgba(255,77,141,0.08)' : 'transparent',
                     borderColor: isSelected ? 'rgba(255,77,141,0.4)' : 'rgba(255,255,255,0.03)',
                     color: isSelected ? '#ff4d8d' : '#E8D9DD',
                   }}
                 >
-                  <span className="font-bold text-[10px] opacity-50 bg-white/5 px-1.5 py-0.5 rounded">Q{q.id}</span>
-                  <span className="whitespace-normal break-words">{q.text}</span>
+                  <span className="font-bold text-[10px] opacity-60 bg-white/5 px-2 py-0.5 rounded-lg shrink-0">Q{q.id}</span>
+                  <span className="whitespace-normal break-words font-medium leading-relaxed">{q.text}</span>
                 </button>
               );
             })}
@@ -365,7 +366,7 @@ export default function QuizMaster() {
         </div>
 
         {/* 3. Announce Winner Section */}
-        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.01] space-y-3">
+        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-3 shadow-lg">
           <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
             Announce Grand Winner
           </label>
@@ -375,12 +376,12 @@ export default function QuizMaster() {
               placeholder="Type Winner Name..."
               value={winnerInput}
               onChange={(e) => setWinnerInput(e.target.value)}
-              className="flex-1 bg-black/60 border border-white/10 text-white rounded-lg px-3 py-2 text-sm outline-none focus:border-[#ff4d8d]/50"
+              className="flex-1 bg-black/60 border border-white/10 text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#ff4d8d]/50"
               style={{ fontFamily: JOST }}
             />
             <button
               type="submit"
-              className="bg-[#ff4d8d] hover:opacity-90 text-white font-bold text-xs px-4 py-2 rounded-lg uppercase tracking-wider transition-opacity cursor-pointer"
+              className="bg-[#ff4d8d] hover:opacity-90 text-white font-bold text-xs px-6 py-3 rounded-xl uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-pink-600/25 active:scale-95"
               style={{ fontFamily: JOST }}
             >
               Announce
@@ -407,7 +408,7 @@ export default function QuizMaster() {
               <button
                 onClick={prevQuestion}
                 disabled={currentQuestionIndex === 0}
-                className="py-3 px-1 bg-white/5 disabled:opacity-20 text-white text-center font-bold text-xs uppercase rounded-lg border border-white/10 cursor-pointer"
+                className="py-3.5 px-1 bg-white/5 disabled:opacity-20 text-white text-center font-bold text-xs uppercase rounded-xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
                 style={{ fontFamily: JOST }}
               >
                 ◀ Prev
@@ -415,11 +416,12 @@ export default function QuizMaster() {
               
               <button
                 onClick={toggleAnswer}
-                className="py-3 px-1 text-center font-bold text-xs uppercase rounded-lg cursor-pointer"
+                className="py-3.5 px-1 text-center font-bold text-xs uppercase rounded-xl cursor-pointer active:scale-95 transition-all shadow-lg"
                 style={{
                   fontFamily: JOST,
                   background: showAnswer ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ff4d8d, #ff6a3d)',
                   color: '#fff',
+                  boxShadow: showAnswer ? '0 4px 10px rgba(16,185,129,0.2)' : '0 4px 10px rgba(255,77,141,0.2)'
                 }}
               >
                 {showAnswer ? 'Hide Answer' : 'Show Answer'}
@@ -428,7 +430,7 @@ export default function QuizMaster() {
               <button
                 onClick={nextQuestion}
                 disabled={currentQuestionIndex === totalQuestions - 1}
-                className="py-3 px-1 bg-white/5 disabled:opacity-20 text-[#F6C453] text-center font-bold text-xs uppercase rounded-lg border border-[#F6C453]/20 cursor-pointer"
+                className="py-3.5 px-1 bg-white/5 disabled:opacity-20 text-[#F6C453] text-center font-bold text-xs uppercase rounded-xl border border-[#F6C453]/20 cursor-pointer active:scale-95 transition-transform"
                 style={{ fontFamily: JOST }}
               >
                 Next ▶
@@ -437,6 +439,5 @@ export default function QuizMaster() {
           </div>
         </div>
       )}
-    </div>
   );
 }
