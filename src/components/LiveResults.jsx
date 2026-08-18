@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const CORMORANT = '"Cormorant Garamond", serif';
 const JOST      = '"Jost", sans-serif';
+const API_BASE  = import.meta.env.VITE_API_URL || '';
 
 const teams = [
   'CADD CENTRE Ksd',
@@ -117,7 +118,7 @@ export default function LiveResults() {
     }
 
     try {
-      const res = await fetch('/api/results/update', {
+      const res = await fetch(`${API_BASE}/api/results/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: modalEvent, team: modalDept, value: modalScore, password })
@@ -139,7 +140,7 @@ export default function LiveResults() {
 
   // Fetch results from backend on mount
   useEffect(() => {
-    fetch('/api/results')
+    fetch(`${API_BASE}/api/results`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -173,7 +174,7 @@ export default function LiveResults() {
       }
 
       try {
-        const res = await fetch('/api/results/update', {
+        const res = await fetch(`${API_BASE}/api/results/update`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ eventId, team, value: currentVal, password })
