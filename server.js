@@ -104,7 +104,7 @@ app.get('/api/results', async (req, res) => {
 app.post('/api/results/update', async (req, res) => {
   const { eventId, team, value, password } = req.body;
 
-  if (password !== 'artx26coded') {
+  if (password !== '5626') {
     return res.status(401).json({ message: 'Unauthorized: Invalid password' });
   }
 
