@@ -357,7 +357,7 @@ export default function QuizMaster() {
                   }}
                 >
                   <span className="font-bold text-[10px] opacity-50 bg-white/5 px-1.5 py-0.5 rounded">Q{q.id}</span>
-                  <span className="line-clamp-2">{q.text}</span>
+                  <span className="whitespace-normal break-words">{q.text}</span>
                 </button>
               );
             })}
