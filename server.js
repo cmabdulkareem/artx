@@ -64,8 +64,14 @@ const memoryStateSchema = new mongoose.Schema({
   currentObjectIndex: { type: Number, default: -1 }, // -1 means show all, 0+ for one by one
   currentQuestionIndex: { type: Number, default: -1 }, // -1 means show all, 0+ for one by one
   showAnswer: { type: Boolean, default: false },
+  // Timer 1 — Sequence / Sketch timer (objects stage, Round 3)
   timerSeconds: { type: Number, default: 120 },
+  timerStartedAt: { type: Number, default: null },
   timerRunning: { type: Boolean, default: false },
+  // Timer 2 — Answer timer (questions stage, Round 3)
+  timer2Seconds: { type: Number, default: 60 },
+  timer2StartedAt: { type: Number, default: null },
+  timer2Running: { type: Boolean, default: false },
   announcedWinner: { type: String, default: '' }
 });
 
@@ -215,7 +221,12 @@ app.get('/api/memory-state', async (req, res) => {
 });
 
 app.post('/api/memory-state/update', async (req, res) => {
-  const { currentRound, currentStage, currentObjectIndex, currentQuestionIndex, showAnswer, timerSeconds, timerRunning, announcedWinner, password } = req.body;
+  const {
+    currentRound, currentStage, currentObjectIndex, currentQuestionIndex, showAnswer,
+    timerSeconds, timerStartedAt, timerRunning,
+    timer2Seconds, timer2StartedAt, timer2Running,
+    announcedWinner, password
+  } = req.body;
 
   if (password !== '5626') {
     return res.status(401).json({ message: 'Unauthorized: Invalid password' });
@@ -227,14 +238,18 @@ app.post('/api/memory-state/update', async (req, res) => {
       state = new MemoryState({ key: 'active_state' });
     }
 
-    if (currentRound !== undefined) state.currentRound = currentRound;
-    if (currentStage !== undefined) state.currentStage = currentStage;
-    if (currentObjectIndex !== undefined) state.currentObjectIndex = currentObjectIndex;
+    if (currentRound !== undefined)         state.currentRound         = currentRound;
+    if (currentStage !== undefined)         state.currentStage         = currentStage;
+    if (currentObjectIndex !== undefined)   state.currentObjectIndex   = currentObjectIndex;
     if (currentQuestionIndex !== undefined) state.currentQuestionIndex = currentQuestionIndex;
-    if (showAnswer !== undefined) state.showAnswer = showAnswer;
-    if (timerSeconds !== undefined) state.timerSeconds = timerSeconds;
-    if (timerRunning !== undefined) state.timerRunning = timerRunning;
-    if (announcedWinner !== undefined) state.announcedWinner = announcedWinner;
+    if (showAnswer !== undefined)           state.showAnswer           = showAnswer;
+    if (timerSeconds !== undefined)         state.timerSeconds         = timerSeconds;
+    if (timerStartedAt !== undefined)       state.timerStartedAt       = timerStartedAt;
+    if (timerRunning !== undefined)         state.timerRunning         = timerRunning;
+    if (timer2Seconds !== undefined)        state.timer2Seconds        = timer2Seconds;
+    if (timer2StartedAt !== undefined)      state.timer2StartedAt      = timer2StartedAt;
+    if (timer2Running !== undefined)        state.timer2Running        = timer2Running;
+    if (announcedWinner !== undefined)      state.announcedWinner      = announcedWinner;
 
     await state.save();
     res.json(state);

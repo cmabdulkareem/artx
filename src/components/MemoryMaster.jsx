@@ -99,17 +99,48 @@ export default function MemoryMaster() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
   const [showAnswer,           setShowAnswer]           = useState(false);
   const [timerSeconds,         setTimerSeconds]         = useState(120);
+  const [timerStartedAt,       setTimerStartedAt]       = useState(null);
   const [timerRunning,         setTimerRunning]         = useState(false);
   const [announcedWinner,      setAnnouncedWinner]      = useState('');
 
+  // Timer 2 state
+  const [timer2Seconds,         setTimer2Seconds]         = useState(60);
+  const [timer2StartedAt,       setTimer2StartedAt]       = useState(null);
+  const [timer2Running,         setTimer2Running]         = useState(false);
+
   const [winnerInput, setWinnerInput] = useState('');
 
-  // Local countdown for display
+  // Local display countdown (mirrors remaining time based on timestamp)
+  const [displaySeconds, setDisplaySeconds] = useState(120);
   useEffect(() => {
-    if (!timerRunning || timerSeconds <= 0) return;
-    const t = setInterval(() => setTimerSeconds(p => (p <= 1 ? 0 : p - 1)), 1000);
-    return () => clearInterval(t);
-  }, [timerRunning, timerSeconds]);
+    const tick = () => {
+      if (timerRunning && timerStartedAt) {
+        const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+        setDisplaySeconds(Math.max(0, timerSeconds - elapsed));
+      } else {
+        setDisplaySeconds(timerSeconds);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [timerRunning, timerStartedAt, timerSeconds]);
+
+  // Local display countdown for Timer 2
+  const [display2Seconds, setDisplay2Seconds] = useState(60);
+  useEffect(() => {
+    const tick = () => {
+      if (timer2Running && timer2StartedAt) {
+        const elapsed = Math.floor((Date.now() - timer2StartedAt) / 1000);
+        setDisplay2Seconds(Math.max(0, timer2Seconds - elapsed));
+      } else {
+        setDisplay2Seconds(timer2Seconds);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [timer2Running, timer2StartedAt, timer2Seconds]);
 
   useEffect(() => {
     if (sessionStorage.getItem('memory_master_pass') === '5626') setIsAuthenticated(true);
@@ -128,15 +159,19 @@ export default function MemoryMaster() {
           setCurrentQuestionIndex(d.currentQuestionIndex ?? -1);
           setShowAnswer(d.showAnswer ?? false);
           setAnnouncedWinner(d.announcedWinner ?? '');
-          if (!timerRunning) setTimerSeconds(d.timerSeconds ?? 120);
+          setTimerSeconds(d.timerSeconds ?? 120);
+          setTimerStartedAt(d.timerStartedAt ?? null);
           setTimerRunning(d.timerRunning ?? false);
+          setTimer2Seconds(d.timer2Seconds ?? 60);
+          setTimer2StartedAt(d.timer2StartedAt ?? null);
+          setTimer2Running(d.timer2Running ?? false);
         })
         .catch(() => {});
     };
     fetch_();
     const iv = setInterval(fetch_, 1500);
     return () => clearInterval(iv);
-  }, [isAuthenticated, timerRunning]);
+  }, [isAuthenticated]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -166,12 +201,56 @@ export default function MemoryMaster() {
         setAnnouncedWinner(d.announcedWinner);
         setTimerSeconds(d.timerSeconds);
         setTimerRunning(d.timerRunning);
+        setTimer2Seconds(d.timer2Seconds);
+        setTimer2Running(d.timer2Running);
+        setTimer2StartedAt(d.timer2StartedAt);
       }
     } catch (e) { console.error(e); }
   };
 
-  const switchRound = (r) => push({ currentRound: r, currentStage: 'lobby', currentObjectIndex: -1, currentQuestionIndex: -1, showAnswer: false, timerRunning: false, announcedWinner: '' });
-  const switchStage = (s) => push({ currentStage: s, currentObjectIndex: -1, currentQuestionIndex: -1, showAnswer: false, timerRunning: false });
+  // Start timer 1
+  const startTimer = (seconds) => push({
+    timerRunning: true,
+    timerSeconds: seconds,
+    timerStartedAt: Date.now(),
+  });
+
+  // Pause timer 1
+  const pauseTimer = () => {
+    const elapsed = timerRunning && timerStartedAt ? Math.floor((Date.now() - timerStartedAt) / 1000) : 0;
+    const remaining = Math.max(0, timerSeconds - elapsed);
+    push({ timerRunning: false, timerStartedAt: null, timerSeconds: remaining });
+  };
+
+  // Start timer 2
+  const startTimer2 = (seconds) => push({
+    timer2Running: true,
+    timer2Seconds: seconds,
+    timer2StartedAt: Date.now(),
+  });
+
+  // Pause timer 2
+  const pauseTimer2 = () => {
+    const elapsed = timer2Running && timer2StartedAt ? Math.floor((Date.now() - timer2StartedAt) / 1000) : 0;
+    const remaining = Math.max(0, timer2Seconds - elapsed);
+    push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: remaining });
+  };
+
+  const switchRound = (r) => push({
+    currentRound: r, currentStage: 'lobby',
+    currentObjectIndex: -1, currentQuestionIndex: -1,
+    showAnswer: false,
+    timerRunning: false, timerStartedAt: null, timerSeconds: 120,
+    timer2Running: false, timer2StartedAt: null, timer2Seconds: 60,
+    announcedWinner: ''
+  });
+
+  const switchStage = (s) => push({
+    currentStage: s, currentObjectIndex: -1, currentQuestionIndex: -1,
+    showAnswer: false,
+    timerRunning: false, timerStartedAt: null,
+    timer2Running: false, timer2StartedAt: null
+  });
 
   const objects   = getObjects(currentRound);
   const questions = getQuestions(currentRound);
@@ -259,23 +338,25 @@ export default function MemoryMaster() {
           <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Switch Stage</label>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { id: 'lobby',     label: '① Lobby'             },
-              { id: 'objects',   label: '② Show Objects'       },
-              { id: 'drawing',   label: '③ Drawing Timer'      },
-              { id: 'questions', label: '④ Questions'          },
-              { id: 'answers',   label: '⑤ Reveal Sequence',   full: true },
-            ].map(s => (
-              <button key={s.id} onClick={() => switchStage(s.id)}
-                className={`py-3 px-2 rounded-lg border text-center font-bold text-xs uppercase cursor-pointer transition-colors ${s.full ? 'col-span-2' : ''}`}
-                style={{
-                  fontFamily: JOST,
-                  background: currentStage === s.id ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
-                  borderColor: currentStage === s.id ? '#F6C453' : 'rgba(255,255,255,0.05)',
-                  color: currentStage === s.id ? '#F6C453' : '#BFAFB4',
-                }}>
-                {s.label}
-              </button>
-            ))}
+              { id: 'lobby',     label: '① Lobby',            round: null },
+              { id: 'objects',   label: '② Show Objects',     round: null },
+              { id: 'drawing',   label: '③ Drawing Timer',    round: 3    }, // Round 3 only
+              { id: 'questions', label: currentRound === 3 ? '④ Questions' : '③ Questions', round: null },
+              { id: 'answers',   label: currentRound === 3 ? '⑤ Reveal Sequence' : '④ Reveal Sequence', round: null, full: true },
+            ]
+              .filter(s => s.round === null || s.round === currentRound)
+              .map(s => (
+                <button key={s.id} onClick={() => switchStage(s.id)}
+                  className={`py-3 px-2 rounded-lg border text-center font-bold text-xs uppercase cursor-pointer transition-colors ${s.full ? 'col-span-2' : ''}`}
+                  style={{
+                    fontFamily: JOST,
+                    background: currentStage === s.id ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
+                    borderColor: currentStage === s.id ? '#F6C453' : 'rgba(255,255,255,0.05)',
+                    color: currentStage === s.id ? '#F6C453' : '#BFAFB4',
+                  }}>
+                  {s.label}
+                </button>
+              ))}
           </div>
         </div>
 
@@ -284,8 +365,12 @@ export default function MemoryMaster() {
           <div className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.01]">
             <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
               Object Selector — {meta.label} ({objects.length} items)
+              {currentRound === 3 && <span className="ml-1 text-[#EF4444]">· Timer auto-starts</span>}
             </label>
-            <button onClick={() => push({ currentObjectIndex: -1 })}
+            <button onClick={() => {
+                // Show all — stop timer if running
+                push({ currentObjectIndex: -1, timerRunning: false, timerStartedAt: null });
+              }}
               className="w-full py-2 rounded text-xs font-bold uppercase border cursor-pointer"
               style={{ fontFamily: JOST, background: currentObjectIndex === -1 ? 'rgba(255,77,141,0.15)' : 'rgba(255,255,255,0.02)', borderColor: currentObjectIndex === -1 ? '#ff4d8d' : 'rgba(255,255,255,0.05)', color: currentObjectIndex === -1 ? '#ff4d8d' : '#BFAFB4' }}>
               Show All {objects.length} {isImageRound ? 'Images' : 'Objects'}
@@ -293,7 +378,14 @@ export default function MemoryMaster() {
 
             <div className={`grid gap-1.5 ${isImageRound ? 'grid-cols-6' : 'grid-cols-4'}`}>
               {objects.map((obj, i) => (
-                <button key={i} onClick={() => push({ currentObjectIndex: i })}
+                <button key={i} onClick={() => {
+                    // Round 3: auto-start timer on first object click if not already running
+                    if (currentRound === 3 && !timerRunning && i === 0) {
+                      push({ currentObjectIndex: i, timerRunning: true, timerStartedAt: Date.now() });
+                    } else {
+                      push({ currentObjectIndex: i });
+                    }
+                  }}
                   className="py-2 rounded text-[10px] font-bold cursor-pointer transition-colors"
                   style={{
                     background: currentObjectIndex === i ? 'rgba(246,196,83,0.2)' : 'rgba(255,255,255,0.02)',
@@ -306,12 +398,24 @@ export default function MemoryMaster() {
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
-              <button onClick={() => currentObjectIndex > 0 && push({ currentObjectIndex: currentObjectIndex - 1 })}
+              <button onClick={() => {
+                  if (currentObjectIndex > 0) push({ currentObjectIndex: currentObjectIndex - 1 });
+                }}
                 disabled={currentObjectIndex <= 0}
                 className="py-2.5 bg-white/5 disabled:opacity-20 text-white font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
                 ◀ Prev
               </button>
-              <button onClick={() => currentObjectIndex < objects.length - 1 && push({ currentObjectIndex: currentObjectIndex + 1 })}
+              <button onClick={() => {
+                  if (currentObjectIndex < objects.length - 1) {
+                    const nextIdx = currentObjectIndex + 1;
+                    // Round 3: auto-start timer when moving from "show all" to first item via Next
+                    if (currentRound === 3 && currentObjectIndex === -1 && !timerRunning) {
+                      push({ currentObjectIndex: 0, timerRunning: true, timerStartedAt: Date.now() });
+                    } else {
+                      push({ currentObjectIndex: nextIdx });
+                    }
+                  }
+                }}
                 disabled={currentObjectIndex >= objects.length - 1}
                 className="py-2.5 bg-white/5 disabled:opacity-20 text-[#F6C453] font-bold text-xs uppercase rounded border border-[#F6C453]/20 cursor-pointer">
                 Next ▶
@@ -320,25 +424,27 @@ export default function MemoryMaster() {
           </div>
         )}
 
-        {/* 3b. TIMER CONTROLS */}
-        {currentStage === 'drawing' && (
+        {/* 3b. TIMER CONTROLS (Round 3 drawing stage only) */}
+        {currentStage === 'drawing' && currentRound === 3 && (
           <div className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.01] text-center">
             <label className="block text-left text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Drawing Timer</label>
-            <div className="text-5xl font-mono font-bold text-white py-2">{formatTime(timerSeconds)}</div>
+            <div className={`text-5xl font-mono font-bold py-2 ${displaySeconds <= 15 ? 'text-red-400' : 'text-white'}`}>
+              {formatTime(displaySeconds)}
+            </div>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => push({ timerRunning: true, timerSeconds })} disabled={timerRunning || timerSeconds <= 0}
+              <button onClick={() => startTimer(displaySeconds)} disabled={timerRunning || displaySeconds <= 0}
                 className="py-3 bg-green-600 disabled:opacity-30 text-white font-bold text-xs uppercase rounded-lg cursor-pointer">
                 ▶ Start
               </button>
-              <button onClick={() => push({ timerRunning: false, timerSeconds })} disabled={!timerRunning}
+              <button onClick={pauseTimer} disabled={!timerRunning}
                 className="py-3 bg-yellow-600 disabled:opacity-30 text-white font-bold text-xs uppercase rounded-lg cursor-pointer">
                 ⏸ Pause
               </button>
-              <button onClick={() => push({ timerRunning: false, timerSeconds: 120 })}
+              <button onClick={() => push({ timerRunning: false, timerStartedAt: null, timerSeconds: 120 })}
                 className="py-2 bg-white/5 text-[#BFAFB4] font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
                 Reset 2m
               </button>
-              <button onClick={() => push({ timerRunning: false, timerSeconds: 180 })}
+              <button onClick={() => push({ timerRunning: false, timerStartedAt: null, timerSeconds: 180 })}
                 className="py-2 bg-white/5 text-[#BFAFB4] font-bold text-xs uppercase rounded border border-white/10 cursor-pointer">
                 Reset 3m
               </button>
@@ -400,12 +506,53 @@ export default function MemoryMaster() {
       {currentStage === 'questions' && currentQuestionIndex !== -1 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-[#0e0108]/95 backdrop-blur-md z-40 max-w-md mx-auto">
           <div className="space-y-2">
+            {/* Timer 2 (Answer Timer) for Round 3 */}
+            {currentRound === 3 && (
+              <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
+                  Answer Timer
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`font-mono text-sm font-bold ${timer2Running ? 'text-[#ff4d8d]' : 'text-white'}`}>
+                    {formatTime(display2Seconds)}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (timer2Running) {
+                        pauseTimer2();
+                      } else {
+                        startTimer2(display2Seconds);
+                      }
+                    }}
+                    className="px-2.5 py-1 text-[9px] font-bold uppercase rounded border border-white/10 text-white cursor-pointer bg-white/5"
+                    style={{ fontFamily: JOST }}
+                  >
+                    {timer2Running ? '⏸ Pause' : '▶ Start'}
+                  </button>
+                  <button
+                    onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 30 })}
+                    className="px-1.5 py-1 text-[9px] uppercase rounded border border-white/10 text-white/50 cursor-pointer"
+                    style={{ fontFamily: JOST }}
+                  >
+                    30s
+                  </button>
+                  <button
+                    onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 60 })}
+                    className="px-1.5 py-1 text-[9px] uppercase rounded border border-white/10 text-white/50 cursor-pointer"
+                    style={{ fontFamily: JOST }}
+                  >
+                    60s
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between text-[10px] text-white/40 uppercase font-bold" style={{ fontFamily: JOST }}>
               <span>Q{currentQuestionIndex + 1} of {questions.length}</span>
               <span className={showAnswer ? 'text-green-400' : 'text-yellow-400'}>{showAnswer ? 'Visible' : 'Hidden'}</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              <button onClick={() => currentQuestionIndex > 0 && push({ currentQuestionIndex: currentQuestionIndex - 1, showAnswer: false })}
+              <button onClick={() => currentQuestionIndex > 0 && push({ currentQuestionIndex: currentQuestionIndex - 1, showAnswer: false, timer2Running: false, timer2StartedAt: null })}
                 disabled={currentQuestionIndex === 0}
                 className="py-3 bg-white/5 disabled:opacity-20 text-white text-center font-bold text-xs uppercase rounded-lg border border-white/10 cursor-pointer"
                 style={{ fontFamily: JOST }}>◀ Prev</button>
@@ -414,7 +561,7 @@ export default function MemoryMaster() {
                 style={{ fontFamily: JOST, background: showAnswer ? 'linear-gradient(135deg,#10b981,#059669)' : 'linear-gradient(135deg,#ff4d8d,#ff6a3d)', color: '#fff' }}>
                 {showAnswer ? 'Hide' : 'Answer'}
               </button>
-              <button onClick={() => currentQuestionIndex < questions.length - 1 && push({ currentQuestionIndex: currentQuestionIndex + 1, showAnswer: false })}
+              <button onClick={() => currentQuestionIndex < questions.length - 1 && push({ currentQuestionIndex: currentQuestionIndex + 1, showAnswer: false, timer2Running: false, timer2StartedAt: null })}
                 disabled={currentQuestionIndex === questions.length - 1}
                 className="py-3 bg-white/5 disabled:opacity-20 text-[#F6C453] text-center font-bold text-xs uppercase rounded-lg border border-[#F6C453]/20 cursor-pointer"
                 style={{ fontFamily: JOST }}>Next ▶</button>

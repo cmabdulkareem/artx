@@ -155,23 +155,54 @@ export default function MemoryChallenge() {
   const [accessCode, setAccessCode] = useState('');
   const [authError, setAuthError] = useState('');
 
-  const [currentRound, setCurrentRound] = useState(1);
-  const [currentStage, setCurrentStage] = useState('lobby');
-  const [currentObjectIndex, setCurrentObjectIndex] = useState(-1);
+  const [currentRound,         setCurrentRound]         = useState(1);
+  const [currentStage,         setCurrentStage]         = useState('lobby');
+  const [currentObjectIndex,   setCurrentObjectIndex]   = useState(-1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(120);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [announcedWinner, setAnnouncedWinner] = useState('');
+  const [showAnswer,           setShowAnswer]           = useState(false);
+  const [announcedWinner,      setAnnouncedWinner]      = useState('');
 
-  // Local countdown mirror
+  // Timer 1 — Sequence / Sketch (objects stage)
+  const [timerSeconds,   setTimerSeconds]   = useState(120);
+  const [timerStartedAt, setTimerStartedAt] = useState(null);
+  const [timerRunning,   setTimerRunning]   = useState(false);
+  const [displaySeconds, setDisplaySeconds] = useState(120);
+
+  // Timer 2 — Answer (questions stage)
+  const [timer2Seconds,   setTimer2Seconds]   = useState(60);
+  const [timer2StartedAt, setTimer2StartedAt] = useState(null);
+  const [timer2Running,   setTimer2Running]   = useState(false);
+  const [display2Seconds, setDisplay2Seconds] = useState(60);
+
+  // Tick for Timer 1
   useEffect(() => {
-    if (!timerRunning || timerSeconds <= 0) return;
-    const timer = setInterval(() => {
-      setTimerSeconds(prev => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timerRunning, timerSeconds]);
+    const tick = () => {
+      if (timerRunning && timerStartedAt) {
+        const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+        setDisplaySeconds(Math.max(0, timerSeconds - elapsed));
+      } else {
+        setDisplaySeconds(timerSeconds);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [timerRunning, timerStartedAt, timerSeconds]);
+
+  // Tick for Timer 2
+  useEffect(() => {
+    const tick = () => {
+      if (timer2Running && timer2StartedAt) {
+        const elapsed = Math.floor((Date.now() - timer2StartedAt) / 1000);
+        setDisplay2Seconds(Math.max(0, timer2Seconds - elapsed));
+      } else {
+        setDisplay2Seconds(timer2Seconds);
+      }
+    };
+    tick();
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [timer2Running, timer2StartedAt, timer2Seconds]);
 
   useEffect(() => {
     if (sessionStorage.getItem('memory_authenticated') === 'true') setIsAuthenticated(true);
@@ -191,12 +222,16 @@ export default function MemoryChallenge() {
           setShowAnswer(data.showAnswer ?? false);
           setAnnouncedWinner(data.announcedWinner ?? '');
           setTimerSeconds(data.timerSeconds ?? 120);
+          setTimerStartedAt(data.timerStartedAt ?? null);
           setTimerRunning(data.timerRunning ?? false);
+          setTimer2Seconds(data.timer2Seconds ?? 60);
+          setTimer2StartedAt(data.timer2StartedAt ?? null);
+          setTimer2Running(data.timer2Running ?? false);
         })
         .catch(() => {});
     };
     fetchState();
-    const iv = setInterval(fetchState, 1000);
+    const iv = setInterval(fetchState, 1500);
     return () => clearInterval(iv);
   }, [isAuthenticated]);
 
@@ -323,7 +358,7 @@ export default function MemoryChallenge() {
 
           {/* ── STAGE: OBJECTS ── */}
           {currentStage === 'objects' && (
-            <motion.div key="objects" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full space-y-6">
+            <motion.div key="objects" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full space-y-6 relative">
               <div className="text-center space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ fontFamily: JOST, color: meta.color }}>
                   {meta.label} · Stage 1 — Memorize
@@ -332,6 +367,19 @@ export default function MemoryChallenge() {
                   {currentObjectIndex === -1 ? `All ${objects.length} Objects` : `Object ${currentObjectIndex + 1} of ${objects.length}`}
                 </h2>
               </div>
+
+              {/* Round 3 only: timer shown as corner badge when countdown is active */}
+              {currentRound === 3 && timerRunning && currentObjectIndex >= 0 && (
+                <div className="absolute top-0 right-0 z-20">
+                  <div className={`px-4 py-2 rounded-xl font-mono font-bold text-2xl border ${
+                    displaySeconds <= 15
+                      ? 'text-red-400 border-red-500/40 bg-red-500/10 animate-pulse'
+                      : 'text-white border-white/10 bg-black/50'
+                  }`} style={{ backdropFilter: 'blur(12px)' }}>
+                    {formatTime(displaySeconds)}
+                  </div>
+                </div>
+              )}
 
               {currentObjectIndex === -1 ? (
                 /* Grid of all objects */
@@ -370,12 +418,12 @@ export default function MemoryChallenge() {
             </motion.div>
           )}
 
-          {/* ── STAGE: DRAWING TIMER ── */}
-          {currentStage === 'drawing' && (
+          {/* ── STAGE: DRAWING TIMER (Round 3 only) ── */}
+          {currentStage === 'drawing' && currentRound === 3 && (
             <motion.div key="drawing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full text-center space-y-8">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ fontFamily: JOST, color: meta.color }}>
-                  {meta.label} · Stage 2 — Drawing
+                  Round 3 · Stage 2 — Drawing
                 </span>
                 <h2 className="text-white/60 font-semibold text-sm uppercase tracking-wider" style={{ fontFamily: JOST }}>
                   Sketch the objects you remember
@@ -384,12 +432,12 @@ export default function MemoryChallenge() {
               <div className="max-w-sm mx-auto p-12 rounded-full border-2 border-white/5 flex flex-col items-center justify-center aspect-square"
                 style={{ background: 'radial-gradient(circle, rgba(25,4,15,0.9) 0%, rgba(14,1,8,0.95) 100%)' }}>
                 <span className="text-[10px] text-white/30 font-bold uppercase tracking-wider mb-2" style={{ fontFamily: JOST }}>Time Remaining</span>
-                <h3 className={`text-7xl md:text-8xl font-bold font-mono ${timerSeconds <= 15 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
-                  {formatTime(timerSeconds)}
+                <h3 className={`text-7xl md:text-8xl font-bold font-mono ${displaySeconds <= 15 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+                  {formatTime(displaySeconds)}
                 </h3>
               </div>
               <p className="text-sm text-white/50 max-w-sm mx-auto" style={{ fontFamily: JOST }}>
-                {timerSeconds > 0
+                {displaySeconds > 0
                   ? "Sketch what you saw! Don't look at others. / ഓർമ്മയിലുള്ളത് വരയ്ക്കുക."
                   : "⏰ Time's up! Put down your pencils. / സമയം കഴിഞ്ഞു!"}
               </p>
@@ -421,11 +469,25 @@ export default function MemoryChallenge() {
                   <div className="w-full p-8 md:p-14 rounded-3xl border border-white/10 flex flex-col justify-center min-h-[350px] relative overflow-hidden"
                     style={{ background: 'rgba(14,1,8,0.85)', backdropFilter: 'blur(30px)' }}>
                     <div className="absolute top-4 left-4 right-4 bottom-4 border border-white/5 rounded-2xl pointer-events-none" />
+                    
+                    {/* Round 3 Answer Timer Overlay */}
+                    {currentRound === 3 && timer2Running && (
+                      <div className="absolute top-6 right-6 z-20">
+                        <div className={`px-4 py-2 rounded-xl font-mono font-bold text-2xl border ${
+                          display2Seconds <= 10
+                            ? 'text-red-400 border-red-500/40 bg-red-500/10 animate-pulse'
+                            : 'text-white border-white/10 bg-black/50'
+                        }`} style={{ backdropFilter: 'blur(12px)' }}>
+                          {formatTime(display2Seconds)}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="relative z-10 space-y-3">
                       <span className="text-[10px] text-white/30 uppercase font-bold tracking-widest" style={{ fontFamily: JOST }}>
                         Question {currentQuestionIndex + 1} of {questions.length}
                       </span>
-                      <p className="text-3xl md:text-5xl text-white font-bold leading-relaxed py-4" style={{ fontFamily: CORMORANT }}>
+                      <p className="text-3xl md:text-5xl text-white font-bold leading-relaxed py-4 pr-16" style={{ fontFamily: CORMORANT }}>
                         "{questions[currentQuestionIndex].text.replace(/^Q\d+\.\s*/, '').replace(/^BONUS:\s*/, '')}"
                       </p>
                     </div>
