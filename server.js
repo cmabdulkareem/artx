@@ -2,8 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
@@ -107,6 +112,14 @@ app.post('/api/results/update', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error updating score', error });
   }
+});
+
+// Serve static frontend files in production
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Catch-all: serve index.html for any non-API route (React Router SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
