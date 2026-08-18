@@ -326,7 +326,7 @@ export default function MemoryChallenge() {
         </span>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 z-10 w-full max-w-6xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 z-10 w-full max-w-[90%] mx-auto">
         <AnimatePresence mode="wait">
 
           {/* ── LOBBY ── */}
@@ -454,7 +454,7 @@ export default function MemoryChallenge() {
               </div>
 
               {currentQuestionIndex === -1 ? (
-                <div className="w-full max-w-5xl mx-auto bg-black/40 border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl">
+                <div className="w-full max-w-[95%] mx-auto bg-black/40 border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl">
                   <h3 className="text-white font-bold text-2xl md:text-3xl mb-8 border-b border-white/5 pb-4 tracking-wider" style={{ fontFamily: CORMORANT }}>
                     Answer the following questions:
                   </h3>
@@ -472,7 +472,7 @@ export default function MemoryChallenge() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full max-w-6xl space-y-8 mx-auto">
+                <div className="w-full max-w-[95%] space-y-8 mx-auto">
                   <div className="w-full p-10 md:p-20 rounded-[2.5rem] border border-white/10 flex flex-col justify-center min-h-[480px] relative overflow-hidden"
                     style={{ background: 'rgba(14,1,8,0.85)', backdropFilter: 'blur(30px)' }}>
                     <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/5 rounded-[1.8rem] pointer-events-none" />
