@@ -47,6 +47,16 @@ const resultSchema = new mongoose.Schema({
 
 const Result = mongoose.model('Result', resultSchema);
 
+const quizStateSchema = new mongoose.Schema({
+  key: { type: String, default: 'active_state', unique: true },
+  currentRoundIndex: { type: Number, default: 0 },
+  currentQuestionIndex: { type: Number, default: -1 },
+  showAnswer: { type: Boolean, default: false },
+  announcedWinner: { type: String, default: '' }
+});
+
+const QuizState = mongoose.model('QuizState', quizStateSchema);
+
 // Helper to seed initial data if database is empty
 async function seedInitialData() {
   const count = await Result.countDocuments();
@@ -87,6 +97,12 @@ async function seedInitialData() {
     await Result.insertMany(initialResults);
     console.log('Seeded initial event results in database.');
   }
+
+  const quizStateCount = await QuizState.countDocuments();
+  if (quizStateCount === 0) {
+    await QuizState.create({ key: 'active_state' });
+    console.log('Seeded default quiz state in database.');
+  }
 }
 
 mongoose.connection.once('open', seedInitialData);
@@ -124,6 +140,44 @@ app.post('/api/results/update', async (req, res) => {
     res.json(allResults);
   } catch (error) {
     res.status(500).json({ message: 'Error updating score', error });
+  }
+});
+
+// Quiz State API Routes
+app.get('/api/quiz-state', async (req, res) => {
+  try {
+    let state = await QuizState.findOne({ key: 'active_state' });
+    if (!state) {
+      state = await QuizState.create({ key: 'active_state' });
+    }
+    res.json(state);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching quiz state', error });
+  }
+});
+
+app.post('/api/quiz-state/update', async (req, res) => {
+  const { currentRoundIndex, currentQuestionIndex, showAnswer, announcedWinner, password } = req.body;
+
+  if (password !== '5626') {
+    return res.status(401).json({ message: 'Unauthorized: Invalid password' });
+  }
+
+  try {
+    let state = await QuizState.findOne({ key: 'active_state' });
+    if (!state) {
+      state = new QuizState({ key: 'active_state' });
+    }
+
+    if (currentRoundIndex !== undefined) state.currentRoundIndex = currentRoundIndex;
+    if (currentQuestionIndex !== undefined) state.currentQuestionIndex = currentQuestionIndex;
+    if (showAnswer !== undefined) state.showAnswer = showAnswer;
+    if (announcedWinner !== undefined) state.announcedWinner = announcedWinner;
+
+    await state.save();
+    res.json(state);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating quiz state', error });
   }
 });
 

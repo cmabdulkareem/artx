@@ -150,6 +150,30 @@ export default function LiveResults() {
       .catch(err => console.error('Error fetching results:', err));
   }, []);
 
+  // Auto-refresh the page on desktop every ~50 seconds (with a random interval between 45s-55s) to bypass Render limit
+  useEffect(() => {
+    if (window.innerWidth < 768) return;
+
+    const runAutoReload = () => {
+      const randomInterval = Math.floor(Math.random() * (55000 - 45000 + 1)) + 45000;
+      return setTimeout(() => {
+        if (window.innerWidth >= 768) {
+          const activeElement = document.activeElement;
+          if (activeElement && activeElement.tagName === 'INPUT') {
+            // Postpone and schedule another check
+            timerId = runAutoReload();
+            return;
+          }
+          window.location.reload();
+        }
+      }, randomInterval);
+    };
+
+    let timerId = runAutoReload();
+
+    return () => clearTimeout(timerId);
+  }, []);
+
   const handleScoreChange = (eventId, team, value) => {
     setResults(prev =>
       prev.map(evt =>

@@ -8,14 +8,16 @@ import Points from './components/Points';
 import Footer from './components/Footer';
 import MusicController from './components/MusicController';
 import LiveResults from './components/LiveResults';
+import Quiz from './components/Quiz';
+import QuizMaster from './components/QuizMaster';
 
 function AppContent() {
   const location = useLocation();
-  const isLiveResults = location.pathname === '/live-results';
+  const isCleanPage = location.pathname === '/live-results' || location.pathname === '/quiz' || location.pathname === '/quiz-master';
 
   return (
     <div className="relative">
-      {!isLiveResults && <Navbar />}
+      {!isCleanPage && <Navbar />}
       <main>
         <Routes>
           <Route path="/" element={<> <Hero /> <About /> <Events /> <Rules /> <Points /> </> } />
@@ -24,10 +26,12 @@ function AppContent() {
           <Route path="/rules" element={<Rules />} />
           <Route path="/points" element={<Points />} />
           <Route path="/live-results" element={<LiveResults />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/quiz-master" element={<QuizMaster />} />
         </Routes>
       </main>
-      {!isLiveResults && <Footer />}
-      {!isLiveResults && <MusicController />}
+      {!isCleanPage && <Footer />}
+      {!isCleanPage && <MusicController />}
     </div>
   );
 }
