@@ -446,7 +446,21 @@ export default function MemoryChallenge() {
 
           {/* ── STAGE: QUESTIONS ── */}
           {currentStage === 'questions' && (
-            <motion.div key="questions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full space-y-6">
+            <motion.div key="questions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full space-y-6 relative">
+              
+              {/* Answer Timer Overlay (Shows in all rounds / layouts when active) */}
+              {timer2Running && (
+                <div className="absolute top-0 right-4 z-20">
+                  <div className={`px-6 py-3 rounded-2xl font-mono font-bold text-3xl md:text-4xl border ${
+                    display2Seconds <= 10
+                      ? 'text-red-400 border-red-500/40 bg-red-500/10 animate-pulse'
+                      : 'text-white border-white/10 bg-black/50'
+                  }`} style={{ backdropFilter: 'blur(12px)' }}>
+                    {formatTime(display2Seconds)}
+                  </div>
+                </div>
+              )}
+
               <div className="text-center space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em]" style={{ fontFamily: JOST, color: meta.color }}>
                   {meta.label} · Stage 3 — Questions
@@ -484,18 +498,6 @@ export default function MemoryChallenge() {
                     style={{ background: 'rgba(14,1,8,0.85)', backdropFilter: 'blur(30px)' }}>
                     <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/5 rounded-[1.8rem] pointer-events-none" />
                     
-                    {/* Answer Timer Overlay (All Rounds) */}
-                    {timer2Running && (
-                      <div className="absolute top-10 right-10 z-20">
-                        <div className={`px-6 py-3 rounded-2xl font-mono font-bold text-3xl md:text-4xl border ${
-                          display2Seconds <= 10
-                            ? 'text-red-400 border-red-500/40 bg-red-500/10 animate-pulse'
-                            : 'text-white border-white/10 bg-black/50'
-                        }`} style={{ backdropFilter: 'blur(12px)' }}>
-                          {formatTime(display2Seconds)}
-                        </div>
-                      </div>
-                    )}
 
                     <div className="relative z-10 space-y-4">
                       <span className="text-xs md:text-sm text-white/40 uppercase font-bold tracking-[0.25em]" style={{ fontFamily: JOST }}>
