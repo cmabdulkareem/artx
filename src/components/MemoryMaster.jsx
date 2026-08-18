@@ -573,6 +573,13 @@ export default function MemoryMaster() {
                 className="py-3 bg-white/5 disabled:opacity-20 text-[#F6C453] text-center font-bold text-xs uppercase rounded-lg border border-[#F6C453]/20 cursor-pointer"
                 style={{ fontFamily: JOST }}>Next ▶</button>
             </div>
+
+            {/* Reveal All Answers Button (available at any point, useful at the end of questions) */}
+            <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: true, timer2Running: false, timer2StartedAt: null })}
+              className="w-full mt-2 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase rounded-lg transition-colors cursor-pointer"
+              style={{ fontFamily: JOST }}>
+              🎓 Reveal All Answers
+            </button>
           </div>
         </div>
       )}
