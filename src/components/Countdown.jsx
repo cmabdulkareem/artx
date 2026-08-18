@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import NowRunning from './NowRunning';
 
 const CORMORANT = '"Cormorant Garamond", serif';
 const JOST      = '"Jost", sans-serif';
@@ -8,6 +9,7 @@ const targetDate = new Date('2026-08-19T09:00:00');
 
 export default function Countdown() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     const calculate = () => {
@@ -19,6 +21,9 @@ export default function Countdown() {
           minutes: Math.floor((diff / 1000 / 60) % 60),
           seconds: Math.floor((diff / 1000) % 60),
         });
+        setIsExpired(false);
+      } else {
+        setIsExpired(true);
       }
     };
     calculate();
@@ -32,6 +37,10 @@ export default function Countdown() {
     { label: 'Mins', value: timeLeft.minutes },
     { label: 'Secs', value: timeLeft.seconds },
   ];
+
+  if (isExpired) {
+    return <NowRunning />;
+  }
 
   return (
     <motion.div
