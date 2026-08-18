@@ -138,17 +138,30 @@ export default function LiveResults() {
     }
   };
 
-  // Fetch results from backend on mount
+  // Fetch results from backend on mount and poll every 2 seconds for real-time updates
   useEffect(() => {
-    fetch(`${API_BASE}/api/results`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setResults(data);
-        }
-      })
-      .catch(err => console.error('Error fetching results:', err));
-  }, []);
+    const fetchResults = () => {
+      // Skip updating local state if the admin is actively editing (has focus on an input) or modal is open
+      const isEditing = document.activeElement && document.activeElement.tagName === 'INPUT';
+      if (isEditing || isModalOpen) {
+        return;
+      }
+
+      fetch(`${API_BASE}/api/results`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            setResults(data);
+          }
+        })
+        .catch(err => console.error('Error polling results:', err));
+    };
+
+    fetchResults(); // Initial fetch
+    const interval = setInterval(fetchResults, 2000); // Poll every 2s
+
+    return () => clearInterval(interval);
+  }, [isModalOpen]);
 
   // Auto-refresh the page on desktop every ~50 seconds (with a random interval between 45s-55s) to bypass Render limit
   useEffect(() => {
