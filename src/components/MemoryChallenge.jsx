@@ -454,26 +454,33 @@ export default function MemoryChallenge() {
               </div>
 
               {currentQuestionIndex === -1 ? (
-                <div className="w-full max-w-3xl mx-auto bg-black/40 border border-white/5 rounded-2xl p-6">
-                  <h3 className="text-white font-bold text-lg mb-4 border-b border-white/5 pb-2" style={{ fontFamily: CORMORANT }}>Answer the following</h3>
-                  <div className="grid md:grid-cols-2 gap-3">
+                <div className="w-full max-w-5xl mx-auto bg-black/40 border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl">
+                  <h3 className="text-white font-bold text-2xl md:text-3xl mb-8 border-b border-white/5 pb-4 tracking-wider" style={{ fontFamily: CORMORANT }}>
+                    Answer the following questions:
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-6">
                     {questions.map(q => (
-                      <div key={q.id} className="p-3 rounded-lg border border-white/5 bg-white/[0.01]">
-                        <p className="text-white/80 text-xs font-semibold" style={{ fontFamily: JOST }}>{q.text}</p>
+                      <div key={q.id} className="p-5 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-4">
+                        <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-white/5 text-white/50" style={{ fontFamily: JOST }}>
+                          Q{q.id}
+                        </span>
+                        <p className="text-white/90 text-sm md:text-lg font-medium leading-relaxed" style={{ fontFamily: JOST }}>
+                          {q.text.replace(/^Q\d+\.\s*/, '')}
+                        </p>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="w-full max-w-4xl space-y-6 mx-auto">
-                  <div className="w-full p-8 md:p-14 rounded-3xl border border-white/10 flex flex-col justify-center min-h-[350px] relative overflow-hidden"
+                <div className="w-full max-w-6xl space-y-8 mx-auto">
+                  <div className="w-full p-10 md:p-20 rounded-[2.5rem] border border-white/10 flex flex-col justify-center min-h-[480px] relative overflow-hidden"
                     style={{ background: 'rgba(14,1,8,0.85)', backdropFilter: 'blur(30px)' }}>
-                    <div className="absolute top-4 left-4 right-4 bottom-4 border border-white/5 rounded-2xl pointer-events-none" />
+                    <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/5 rounded-[1.8rem] pointer-events-none" />
                     
                     {/* Round 3 Answer Timer Overlay */}
                     {currentRound === 3 && timer2Running && (
-                      <div className="absolute top-6 right-6 z-20">
-                        <div className={`px-4 py-2 rounded-xl font-mono font-bold text-2xl border ${
+                      <div className="absolute top-10 right-10 z-20">
+                        <div className={`px-6 py-3 rounded-2xl font-mono font-bold text-3xl md:text-4xl border ${
                           display2Seconds <= 10
                             ? 'text-red-400 border-red-500/40 bg-red-500/10 animate-pulse'
                             : 'text-white border-white/10 bg-black/50'
@@ -483,22 +490,22 @@ export default function MemoryChallenge() {
                       </div>
                     )}
 
-                    <div className="relative z-10 space-y-3">
-                      <span className="text-[10px] text-white/30 uppercase font-bold tracking-widest" style={{ fontFamily: JOST }}>
+                    <div className="relative z-10 space-y-4">
+                      <span className="text-xs md:text-sm text-white/40 uppercase font-bold tracking-[0.25em]" style={{ fontFamily: JOST }}>
                         Question {currentQuestionIndex + 1} of {questions.length}
                       </span>
-                      <p className="text-3xl md:text-5xl text-white font-bold leading-relaxed py-4 pr-16" style={{ fontFamily: CORMORANT }}>
+                      <p className="text-4xl md:text-6xl text-white font-bold leading-normal py-6 pr-24" style={{ fontFamily: CORMORANT }}>
                         "{questions[currentQuestionIndex].text.replace(/^Q\d+\.\s*/, '').replace(/^BONUS:\s*/, '')}"
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex justify-center min-h-[70px]">
+                  <div className="flex justify-center min-h-[90px]">
                     <AnimatePresence mode="wait">
                       {showAnswer && (
-                        <motion.div key="ans" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }}
-                          className="bg-green-500/10 border border-green-500/20 rounded-2xl px-8 py-3.5">
-                          <p className="text-green-400 font-bold text-xl md:text-2xl" style={{ fontFamily: JOST }}>
+                        <motion.div key="ans" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                          className="bg-green-500/15 border border-green-500/30 rounded-3xl px-12 py-5 shadow-lg shadow-green-500/5">
+                          <p className="text-green-400 font-bold text-2xl md:text-4xl tracking-wide text-center" style={{ fontFamily: JOST }}>
                             {questions[currentQuestionIndex].answer}
                           </p>
                         </motion.div>
