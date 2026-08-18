@@ -245,12 +245,31 @@ export default function MemoryMaster() {
     announcedWinner: ''
   });
 
-  const switchStage = (s) => push({
-    currentStage: s, currentObjectIndex: -1, currentQuestionIndex: -1,
-    showAnswer: false,
-    timerRunning: false, timerStartedAt: null,
-    timer2Running: false, timer2StartedAt: null
-  });
+  const switchStage = (s) => {
+    if (s === 'reveal_q_answers') {
+      push({
+        currentStage: 'questions',
+        currentObjectIndex: -1,
+        currentQuestionIndex: -1,
+        showAnswer: true,
+        timerRunning: false,
+        timerStartedAt: null,
+        timer2Running: false,
+        timer2StartedAt: null
+      });
+    } else {
+      push({
+        currentStage: s,
+        currentObjectIndex: -1,
+        currentQuestionIndex: -1,
+        showAnswer: false,
+        timerRunning: false,
+        timerStartedAt: null,
+        timer2Running: false,
+        timer2StartedAt: null
+      });
+    }
+  };
 
   const objects   = getObjects(currentRound);
   const questions = getQuestions(currentRound);
@@ -338,25 +357,34 @@ export default function MemoryMaster() {
           <label className="block text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>Switch Stage</label>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { id: 'lobby',     label: '① Lobby',            round: null },
-              { id: 'objects',   label: '② Show Objects',     round: null },
-              { id: 'drawing',   label: '③ Drawing Timer',    round: 3    }, // Round 3 only
-              { id: 'questions', label: currentRound === 3 ? '④ Questions' : '③ Questions', round: null },
-              { id: 'answers',   label: currentRound === 3 ? '⑤ Reveal Sequence' : '④ Reveal Sequence', round: null, full: true },
+              { id: 'lobby',            label: '① Lobby',              round: null },
+              { id: 'objects',          label: '② Show Objects',       round: null },
+              { id: 'drawing',          label: '③ Drawing Timer',      round: 3    }, // Round 3 only
+              { id: 'questions',        label: currentRound === 3 ? '④ Questions' : '③ Questions', round: null },
+              { id: 'reveal_q_answers', label: currentRound === 3 ? '⑤ Reveal Answers' : '④ Reveal Answers', round: null },
+              { id: 'answers',          label: currentRound === 3 ? '⑥ Reveal Sequence' : '⑤ Reveal Sequence', round: null, full: true },
             ]
               .filter(s => s.round === null || s.round === currentRound)
-              .map(s => (
-                <button key={s.id} onClick={() => switchStage(s.id)}
-                  className={`py-3 px-2 rounded-lg border text-center font-bold text-xs uppercase cursor-pointer transition-colors ${s.full ? 'col-span-2' : ''}`}
-                  style={{
-                    fontFamily: JOST,
-                    background: currentStage === s.id ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
-                    borderColor: currentStage === s.id ? '#F6C453' : 'rgba(255,255,255,0.05)',
-                    color: currentStage === s.id ? '#F6C453' : '#BFAFB4',
-                  }}>
-                  {s.label}
-                </button>
-              ))}
+              .map(s => {
+                const isActive = 
+                  s.id === 'reveal_q_answers'
+                    ? (currentStage === 'questions' && currentQuestionIndex === -1 && showAnswer)
+                    : s.id === 'questions'
+                    ? (currentStage === 'questions' && !(currentQuestionIndex === -1 && showAnswer))
+                    : (currentStage === s.id);
+                return (
+                  <button key={s.id} onClick={() => switchStage(s.id)}
+                    className={`py-3 px-2 rounded-lg border text-center font-bold text-xs uppercase cursor-pointer transition-colors ${s.full ? 'col-span-2' : ''}`}
+                    style={{
+                      fontFamily: JOST,
+                      background: isActive ? 'rgba(246,196,83,0.12)' : 'rgba(255,255,255,0.02)',
+                      borderColor: isActive ? '#F6C453' : 'rgba(255,255,255,0.05)',
+                      color: isActive ? '#F6C453' : '#BFAFB4',
+                    }}>
+                    {s.label}
+                  </button>
+                );
+              })}
           </div>
         </div>
 
