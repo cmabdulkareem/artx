@@ -585,45 +585,43 @@ export default function MemoryMaster() {
         <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-[#0e0108]/95 backdrop-blur-md z-40 max-w-md mx-auto shadow-2xl">
           <div className="space-y-3">
             {/* Timer 2 (Answer Timer) - All Rounds */}
-            {
-              <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
-                  Answer Timer
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
+                Answer Timer
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className={`font-mono text-base font-bold mr-2 ${timer2Running ? 'text-[#ff4d8d]' : 'text-white'}`}>
+                  {formatTime(display2Seconds)}
                 </span>
-                <div className="flex items-center gap-1.5">
-                  <span className={`font-mono text-base font-bold mr-2 ${timer2Running ? 'text-[#ff4d8d]' : 'text-white'}`}>
-                    {formatTime(display2Seconds)}
-                  </span>
-                  <button
-                    onClick={() => {
-                      if (timer2Running) {
-                        pauseTimer2();
-                      } else {
-                        startTimer2(display2Seconds);
-                      }
-                    }}
-                    className="px-3.5 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 text-white cursor-pointer bg-white/5 active:scale-95"
-                    style={{ fontFamily: JOST }}
-                  >
-                    {timer2Running ? '⏸ Pause' : '▶ Start'}
-                  </button>
-                  <button
-                    onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 30 })}
-                    className="px-2 py-2 text-[10px] uppercase rounded-lg border border-white/10 text-white/50 cursor-pointer active:scale-95"
-                    style={{ fontFamily: JOST }}
-                  >
-                    30s
-                  </button>
-                  <button
-                    onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 60 })}
-                    className="px-2 py-2 text-[10px] uppercase rounded-lg border border-white/10 text-white/50 cursor-pointer active:scale-95"
-                    style={{ fontFamily: JOST }}
-                  >
-                    60s
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    if (timer2Running) {
+                      pauseTimer2();
+                    } else {
+                      startTimer2(display2Seconds);
+                    }
+                  }}
+                  className="px-3.5 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 text-white cursor-pointer bg-white/5 active:scale-95"
+                  style={{ fontFamily: JOST }}
+                >
+                  {timer2Running ? '⏸ Pause' : '▶ Start'}
+                </button>
+                <button
+                  onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 30 })}
+                  className="px-2 py-2 text-[10px] uppercase rounded-lg border border-white/10 text-white/50 cursor-pointer active:scale-95"
+                  style={{ fontFamily: JOST }}
+                >
+                  30s
+                </button>
+                <button
+                  onClick={() => push({ timer2Running: false, timer2StartedAt: null, timer2Seconds: 60 })}
+                  className="px-2 py-2 text-[10px] uppercase rounded-lg border border-white/10 text-white/50 cursor-pointer active:scale-95"
+                  style={{ fontFamily: JOST }}
+                >
+                  60s
+                </button>
               </div>
-            )}
+            </div>
 
             <div className="flex justify-between text-[10px] text-white/40 uppercase font-bold" style={{ fontFamily: JOST }}>
               <span>Q{currentQuestionIndex + 1} of {questions.length}</span>
