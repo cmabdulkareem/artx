@@ -439,5 +439,6 @@ export default function QuizMaster() {
           </div>
         </div>
       )}
+    </div>
   );
 }
