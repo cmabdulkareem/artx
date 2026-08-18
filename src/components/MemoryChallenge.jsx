@@ -460,13 +460,20 @@ export default function MemoryChallenge() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-6">
                     {questions.map(q => (
-                      <div key={q.id} className="p-5 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-4">
-                        <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-white/5 text-white/50" style={{ fontFamily: JOST }}>
-                          Q{q.id}
-                        </span>
-                        <p className="text-white/90 text-sm md:text-lg font-medium leading-relaxed" style={{ fontFamily: JOST }}>
-                          {q.text.replace(/^Q\d+\.\s*/, '')}
-                        </p>
+                      <div key={q.id} className="p-5 rounded-xl border border-white/5 bg-white/[0.02] flex flex-col gap-3">
+                        <div className="flex items-start gap-4">
+                          <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-white/5 text-white/50" style={{ fontFamily: JOST }}>
+                            Q{q.id}
+                          </span>
+                          <p className="text-white/90 text-sm md:text-lg font-medium leading-relaxed" style={{ fontFamily: JOST }}>
+                            {q.text.replace(/^Q\d+\.\s*/, '')}
+                          </p>
+                        </div>
+                        {showAnswer && (
+                          <div className="mt-2 pl-14 text-green-400 font-bold text-sm md:text-lg border-t border-white/5 pt-2" style={{ fontFamily: JOST }}>
+                            Ans: {q.answer}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -477,8 +484,8 @@ export default function MemoryChallenge() {
                     style={{ background: 'rgba(14,1,8,0.85)', backdropFilter: 'blur(30px)' }}>
                     <div className="absolute top-6 left-6 right-6 bottom-6 border border-white/5 rounded-[1.8rem] pointer-events-none" />
                     
-                    {/* Round 3 Answer Timer Overlay */}
-                    {currentRound === 3 && timer2Running && (
+                    {/* Answer Timer Overlay (All Rounds) */}
+                    {timer2Running && (
                       <div className="absolute top-10 right-10 z-20">
                         <div className={`px-6 py-3 rounded-2xl font-mono font-bold text-3xl md:text-4xl border ${
                           display2Seconds <= 10

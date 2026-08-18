@@ -459,11 +459,18 @@ export default function MemoryMaster() {
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
                 Questions — {meta.label}
               </label>
-              <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: false })}
-                className="text-[10px] font-bold uppercase tracking-wider cursor-pointer"
-                style={{ fontFamily: JOST, color: currentQuestionIndex === -1 ? '#ffb347' : '#6B7280' }}>
-                Show All
-              </button>
+              <div className="flex gap-2">
+                <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: false })}
+                  className={`text-[9px] font-bold uppercase tracking-wider cursor-pointer px-2 py-0.5 rounded border transition-colors ${currentQuestionIndex === -1 && !showAnswer ? 'border-[#ffb347] text-[#ffb347] bg-[#ffb347]/5' : 'border-white/10 text-white/40'}`}
+                  style={{ fontFamily: JOST }}>
+                  Show Questions
+                </button>
+                <button onClick={() => push({ currentQuestionIndex: -1, showAnswer: true })}
+                  className={`text-[9px] font-bold uppercase tracking-wider cursor-pointer px-2 py-0.5 rounded border transition-colors ${currentQuestionIndex === -1 && showAnswer ? 'border-green-400 text-green-400 bg-green-500/5' : 'border-white/10 text-white/40'}`}
+                  style={{ fontFamily: JOST }}>
+                  Reveal Answers
+                </button>
+              </div>
             </div>
             <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 border border-white/5 rounded-xl p-2 bg-black/30">
               {questions.map((q, i) => (
@@ -506,8 +513,8 @@ export default function MemoryMaster() {
       {currentStage === 'questions' && currentQuestionIndex !== -1 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-[#0e0108]/95 backdrop-blur-md z-40 max-w-md mx-auto">
           <div className="space-y-2">
-            {/* Timer 2 (Answer Timer) for Round 3 */}
-            {currentRound === 3 && (
+            {/* Timer 2 (Answer Timer) - All Rounds */}
+            {
               <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest" style={{ fontFamily: JOST }}>
                   Answer Timer
