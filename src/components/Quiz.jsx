@@ -24,9 +24,9 @@ const quizData = [
       },
       {
         id: 3,
-        questionEn: "Who is the current Minister for Higher Education in Kerala?",
-        questionMl: "കേരളത്തിലെ നിലവിലെ ഉന്നത വിദ്യാഭ്യാസ മന്ത്രി ആരാണ്?",
-        answer: "Dr. R. Bindu / ഡോ. ആർ. ബിന്ദു"
+        questionEn: "Who was the first President of the Indian National Congress?",
+        questionMl: "ഇന്ത്യൻ നാഷണൽ കോൺഗ്രസിന്റെ ആദ്യ പ്രസിഡന്റ് ആരായിരുന്നു?",
+        answer: "Womesh Chandra Bonnerjee / വോമേഷ് ചന്ദ്ര ബോണർജി"
       },
       {
         id: 4,
@@ -42,15 +42,15 @@ const quizData = [
       },
       {
         id: 6,
-        questionEn: "Which is the most recently formed district in Kerala?",
-        questionMl: "കേരളത്തിൽ ഏറ്റവും അവസാനം രൂപീകൃതമായ ജില്ല ഏത്?",
-        answer: "Kasaragod / കാസർകോട്"
+        questionEn: "Which is the largest state in India by area?",
+        questionMl: "വിസ്തൃതി കൊണ്ട് ഇന്ത്യയിലെ ഏറ്റവും വലിയ സംസ്ഥാനം ഏതാണ്?",
+        answer: "Rajasthan / രാജസ്ഥാൻ"
       },
       {
         id: 7,
-        questionEn: "What is the name of the current District Police Chief of Kasaragod district?",
-        questionMl: "കാസർകോട് ജില്ലയിലെ നിലവിലെ ജില്ലാ പോലീസ് മേധാവിയുടെ പേര് എന്താണ്?",
-        answer: "D. Shilpa IPS / ഡി. ശിൽപ ഐ.പി.എസ്"
+        questionEn: "Which space mission made India the first country to land near the Moon's south pole?",
+        questionMl: "ചന്ദ്രന്റെ ദക്ഷിണ ധ്രുവത്തിൽ ആദ്യമായി ഇറങ്ങിയ രാജ്യമെന്ന ബഹുമതി ഇന്ത്യക്ക് ലഭിച്ചത് ഏത് ദൗത്യത്തിലൂടെ?",
+        answer: "Chandrayaan-3 / ചന്ദ്രയാൻ-3"
       },
       {
         id: 8,
@@ -95,15 +95,15 @@ const quizData = [
       },
       {
         id: 4,
-        questionEn: "Which district in Kerala has the highest number of rivers?",
-        questionMl: "കേരളത്തിൽ ഏറ്റവും കൂടുതൽ നദികളുള്ള ജില്ല ഏതാണ്?",
-        answer: "Kasaragod / കാസർകോട്"
+        questionEn: "Which river is known as the 'Sorrow of Bengal'?",
+        questionMl: "ഏത് നദിയാണ് 'ബംഗാളിന്റെ ദുഃഖം' എന്ന് അറിയപ്പെടുന്നത്?",
+        answer: "Damodar River / ദാമോദർ നദി"
       },
       {
         id: 5,
-        questionEn: "Who is the current Chairperson of Kasaragod Municipality?",
-        questionMl: "കാസർകോട് മുനിസിപ്പാലിറ്റിയുടെ നിലവിലെ ചെയർപേഴ്സൺ ആരാണ്?",
-        answer: "V. M. Muneer / വി. എം. മുനീർ"
+        questionEn: "Which country is the largest producer of milk in the world?",
+        questionMl: "ലോകത്ത് ഏറ്റവും കൂടുതൽ പാൽ ഉൽപ്പാദിപ്പിക്കുന്ന രാജ്യം ഏതാണ്?",
+        answer: "India / ഇന്ത്യ"
       },
       {
         id: 6,
@@ -119,15 +119,15 @@ const quizData = [
       },
       {
         id: 8,
-        questionEn: "Which is the northernmost river in Kerala?",
-        questionMl: "കേരളത്തിലെ ഏറ്റവും വടക്കേ അറ്റത്തുള്ള നദി ഏതാണ്?",
-        answer: "Manjeshwaram River / മഞ്ചേശ്വരം പുഴ"
+        questionEn: "Which is the longest river entirely within India?",
+        questionMl: "പൂർണ്ണമായും ഇന്ത്യക്ക് ഉള്ളിലൂടെ ഒഴുകുന്ന ഏറ്റവും നീളമേറിയ നദി ഏതാണ്?",
+        answer: "Godavari / ഗോദാവരി"
       },
       {
         id: 9,
-        questionEn: "Who is the current Minister for Youth Affairs and Sports in Kerala?",
-        questionMl: "നിലവിൽ കേരളത്തിന്റെ യുവജനകാര്യ വകുപ്പ് മന്ത്രി ആര്?",
-        answer: "V. Abdurahiman / വി. അബ്ദുറഹിമാൻ"
+        questionEn: "Who was the first person to receive the Bharat Ratna award?",
+        questionMl: "ഭാരതരത്നം പുരസ്കാരം ആദ്യമായി ലഭിച്ചത് ആർക്കാണ്?",
+        answer: "C. Rajagopalachari / സി. രാജഗോപാലാചാരി"
       },
       {
         id: 10,
@@ -154,21 +154,21 @@ const quizData = [
       },
       {
         id: 3,
-        questionEn: "What is the current official name of Kerala, following the passing of the Bill in Parliament on August 12, 2026?",
-        questionMl: "2026 ഓഗസ്റ്റ് 12-ന് പാർലമെന്റിൽ ബിൽ പാസാക്കിയതിനെ തുടർന്ന് കേരളത്തിന്റെ നിലവിലെ ഔദ്യോഗിക പേര് എന്താണ്?",
-        answer: "Keralam / കേരളം"
+        questionEn: "How many members does the Rajya Sabha have in total?",
+        questionMl: "രാജ്യസഭയിൽ ആകെ എത്ര അംഗങ്ങൾ ഉണ്ട്?",
+        answer: "245 / 245"
       },
       {
         id: 4,
-        questionEn: "Which is the highest peak in Kerala?",
-        questionMl: "കേരളത്തിലെ ഏറ്റവും ഉയരം കൂടിയ കൊടുമുടി ഏതാണ്?",
+        questionEn: "Which is the highest peak in South India?",
+        questionMl: "ദക്ഷിണേന്ത്യയിലെ ഏറ്റവും ഉയരം കൂടിയ കൊടുമുടി ഏതാണ്?",
         answer: "Anamudi / ആനമുടി"
       },
       {
         id: 5,
-        questionEn: "Who is the current Transport Minister of Kerala?",
-        questionMl: "കേരളത്തിന്റെ നിലവിലെ ഗതാഗത മന്ത്രി ആരാണ്?",
-        answer: "K. B. Ganesh Kumar / കെ. ബി. ഗണേഷ് കുമാർ"
+        questionEn: "Who is known as the 'Father of the Indian Constitution'?",
+        questionMl: "ഇന്ത്യൻ ഭരണഘടനയുടെ 'പിതാവ്' എന്ന് അറിയപ്പെടുന്നത് ആരാണ്?",
+        answer: "Dr. B. R. Ambedkar / ഡോ. ബി. ആർ. അംബേദ്കർ"
       }
     ]
   }
