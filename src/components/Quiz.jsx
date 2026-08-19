@@ -14,7 +14,7 @@ const quizData = [
         id: 1,
         questionEn: "Who were the first foreigners to arrive in India?",
         questionMl: "ഇന്ത്യയിലേക്ക് ആദ്യമായി എത്തിയ വിദേശികൾ ആരാണ്?",
-        answer: "Portuguese / പോർച്ചുഗീസുകാർ"
+        answer: "Arabs / അറബികൾ"
       },
       {
         id: 2,
@@ -144,7 +144,7 @@ const quizData = [
         id: 1,
         questionEn: "Which Indian Education Minister resigned following the protest by the Cockroach Janta Party (CJP)?",
         questionMl: "Cockroach Janta Party (CJP) യുടെ സമരത്തെ തുടർന്ന് രാജിവെച്ച ഇന്ത്യയുടെ വിദ്യാഭ്യാസ മന്ത്രി ആരായിരുന്നു?",
-        answer: "Will be revealed by the Quiz Master / ക്വിസ് മാസ്റ്റർ വെളിപ്പെടുത്തും"
+        answer: "Dharmendra Pradhan / ധർമേന്ദ്ര പ്രധാൻ"
       },
       {
         id: 2,
